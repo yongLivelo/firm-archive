@@ -10,17 +10,38 @@ class Query {
 
   render() {
     let stringTable = "";
-    let total = 0;
+    let totalAmount = 0;
+    let personalTotalAmount = 0;
+    let businessTotalAmount = 0;
+
     Query.queries.forEach((query) => {
       stringTable += `<tr><td>${query.amount}</td><td>${query.flow}</td><td>${query.payment}</td><td>${query.expense}</td><td>${query.date}</td></tr>`;
+
       if (query.flow === "out") {
-        total -= query.amount;
+        totalAmount -= query.amount;
       } else {
-        total += query.amount;
+        totalAmount += query.amount;
+      }
+
+      if (query.expense === "Personal expense") {
+        if (query.flow === "out") {
+          personalTotalAmount -= query.amount;
+        } else {
+          personalTotalAmount += query.amount;
+        }
+      } else if (query.expense === "Business expense") {
+        if (query.flow === "out") {
+          businessTotalAmount -= query.amount;
+        } else {
+          businessTotalAmount += query.amount;
+        }
       }
     });
 
-    totalAmount.innerHTML = "₱" + total;
+    totalAmountEl.innerHTML = "₱" + totalAmount;
+    personalTotalAmountEl.innerHTML = "₱" + personalTotalAmount;
+    businessTotalAmountEl.innerHTML = "₱" + businessTotalAmount;
+
     queryTable.innerHTML = stringTable;
   }
 }
@@ -31,7 +52,9 @@ const flowLabel = document.getElementsByName("flow");
 const paymentLabel = document.getElementById("payment");
 const expenseLabel = document.getElementById("expense");
 const queryTable = document.getElementById("query-table");
-const totalAmount = document.getElementById("total-amount");
+const totalAmountEl = document.getElementById("total-amount");
+const personalTotalAmountEl = document.getElementById("personal-total-amount");
+const businessTotalAmountEl = document.getElementById("business-total-amount");
 
 submitQuery.addEventListener("click", (event) => {
   if (
@@ -43,7 +66,7 @@ submitQuery.addEventListener("click", (event) => {
   ) {
     alert("Input missing");
   } else {
-    console.log(amountLabel.value);
+    console.log("HELLO GUMAGANA KABA");
     let flowValue;
     flowLabel.forEach((input) => {
       if (input.checked) {
