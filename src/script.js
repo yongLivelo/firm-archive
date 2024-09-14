@@ -8,12 +8,19 @@ class Query {
     this.date = date;
   }
 
-  renderTable() {
+  render() {
     let stringTable = "";
-
+    let total = 0;
     Query.queries.forEach((query) => {
       stringTable += `<tr><td>${query.amount}</td><td>${query.flow}</td><td>${query.payment}</td><td>${query.expense}</td><td>${query.date}</td></tr>`;
+      if (query.flow === "out") {
+        total -= query.amount;
+      } else {
+        total += query.amount;
+      }
     });
+
+    totalAmount.innerHTML = "₱" + total;
     queryTable.innerHTML = stringTable;
   }
 }
@@ -24,6 +31,8 @@ const flowLabel = document.getElementsByName("flow");
 const paymentLabel = document.getElementById("payment");
 const expenseLabel = document.getElementById("expense");
 const queryTable = document.getElementById("query-table");
+const totalAmount = document.getElementById("total-amount");
+
 submitQuery.addEventListener("click", (event) => {
   if (
     amountLabel.value === undefined ||
@@ -34,8 +43,8 @@ submitQuery.addEventListener("click", (event) => {
   ) {
     alert("Input missing");
   } else {
+    console.log(amountLabel.value);
     let flowValue;
-
     flowLabel.forEach((input) => {
       if (input.checked) {
         flowValue = input.value;
@@ -45,15 +54,15 @@ submitQuery.addEventListener("click", (event) => {
     let date = new Date();
     let currentTime = `${date.getHours()}:${date.getMinutes()}`;
     event.preventDefault();
-    console.log();
+
     let query = new Query(
-      amountLabel.value,
+      parseFloat(amountLabel.value),
       flowValue,
       paymentLabel.options[paymentLabel.selectedIndex].text,
       expenseLabel.options[expenseLabel.selectedIndex].text,
       currentTime
     );
     Query.queries.push(query);
-    query.renderTable();
+    query.render();
   }
 });

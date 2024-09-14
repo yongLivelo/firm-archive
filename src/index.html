@@ -10,7 +10,10 @@
   </head>
 
   <body>
-    <nav data-bs-theme="dark" class=" navbar navbar-expand-lg navbar-light bg-primary">
+    <nav
+      data-bs-theme="dark"
+      class="navbar navbar-expand-lg navbar-light bg-primary"
+    >
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Finance Manager</a>
         <button
@@ -30,60 +33,25 @@
               <a class="nav-link active" aria-current="page" href="#">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href="#"
-                id="navbarDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Dropdown
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li><hr class="dropdown-divider" /></li>
-                <li>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </li>
-              </ul>
+              <a class="nav-link" href="#">Statistics</a>
             </li>
             <li class="nav-item">
-              <a
-                class="nav-link disabled"
-                href="#"
-                tabindex="-1"
-                aria-disabled="true"
-                >Disabled</a
-              >
+              <a class="nav-link" href="#">Inventory</a>
             </li>
           </ul>
-          <form class="d-flex">
-            <input
-              class="form-control me-2"
-              type="search"
-              placeholder="Search"
-              aria-label="Search"
-            />
-            <button class="btn btn-outline-success" type="submit">
-              Search
-            </button>
-          </form>
         </div>
       </div>
     </nav>
 
-    <div data-bs-theme="dark" style="position:absolute; height: 100%" class="container-fluid bg-secondary pt-2">
+    <div
+      data-bs-theme="dark"
+      class="container-fluid min-vh-100 bg-secondary pt-2"
+    >
       <div class="row">
-        <div class="col-sm-8 ">
+        <div class="col-sm-8">
           <div class="row mb-4">
             <form>
               <div class="form-group mb-2">
-          
                 <input
                   type="number"
                   min="1"
@@ -143,7 +111,7 @@
               </button>
             </form>
           </div>
-          <div class=" mb-4">
+          <div class="mb-4">
             <table class="table">
               <thead>
                 <tr>
@@ -160,13 +128,24 @@
           </div>
         </div>
 
-        <div class="col-sm-4 ">
-          
+        <div class="col-sm-4">
           <div class="card mb-4">
-          <div class="card-body text-center">
-            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
-              class="rounded-circle img-fluid" style="width: 150px;">
-            <h5 class="my-3">Julio Livelo</h5>
+            <div class="card-body text-center">
+              <img
+                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                alt="avatar"
+                class="rounded-circle img-fluid"
+                style="width: 150px"
+              />
+              <h5 class="my-3">Julio Livelo</h5>
+            </div>
+          </div>
+
+          <div class="card" style="width: 18rem">
+            <div class="card-body">
+              <h5 class="card-title">Total</h5>
+              <p id="total-amount" class="card-text">"₱0</p>
+            </div>
           </div>
         </div>
       </div>
