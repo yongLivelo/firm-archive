@@ -15,7 +15,11 @@ class Query {
     let businessTotalAmount = 0;
 
     Query.queries.forEach((query) => {
-      stringTable += `<tr><td>${query.amount}</td><td>${query.flow}</td><td>${query.payment}</td><td>${query.expense}</td><td>${query.date}</td></tr>`;
+      stringTable += `<tr><td>${query.amount}</td><td>${query.flow}</td><td>${
+        query.payment
+      }</td><td>${
+        query.expense
+      }</td><td>${query.date.getHours()}:${query.date.getMinutes()}</td></tr>`;
 
       if (query.flow === "out") {
         totalAmount -= query.amount;
@@ -66,7 +70,6 @@ submitQuery.addEventListener("click", (event) => {
   ) {
     alert("Input missing");
   } else {
-    console.log("HELLO GUMAGANA KABA");
     let flowValue;
     flowLabel.forEach((input) => {
       if (input.checked) {
@@ -75,7 +78,6 @@ submitQuery.addEventListener("click", (event) => {
     });
 
     let date = new Date();
-    let currentTime = `${date.getHours()}:${date.getMinutes()}`;
     event.preventDefault();
 
     let query = new Query(
@@ -83,9 +85,12 @@ submitQuery.addEventListener("click", (event) => {
       flowValue,
       paymentLabel.options[paymentLabel.selectedIndex].text,
       expenseLabel.options[expenseLabel.selectedIndex].text,
-      currentTime
+      date
     );
     Query.queries.push(query);
     query.render();
   }
 });
+
+const blurredText = document.querySelectorAll(".blurred");
+console.log(blurredText);
