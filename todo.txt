@@ -1,3 +1,20 @@
-3. Make a Get CSV File
-4. Create Local Save File
-5. Create Local Load File
+1. Authentication
+- Create Login and Logout Functionality
+- Create Account functionality (Optional, kung kaya ko hehe)
+
+2. Main Data Entry 
+-Customizable tags in settings 
+-Add Save Button (Local Storage Only according to account)
+-Editable and deletable Table
+-Sort Table
+-Turn Table Data into CSV File
+-Limit Table to 10 rows, you can move sections
+
+
+3. Statistical Analysis
+- Bar Graph for the disparities of amount of expenses and sales in a given time period (Monthly, Daily, Yearly)
+- Pie Chart of tags (Separate for expenses and sales)
+
+4. History
+- Overview of whole table
+- Search functionality
