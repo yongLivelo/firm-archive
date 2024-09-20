@@ -1,20 +1,42 @@
-$("#log-out").click(() => {
-  localStorage.removeItem("user");
-  window.location.replace("login.html");
+$("#log-in").click(() => {
+  const username = $("#username").val();
+  const password = $("#password").val();
 });
 
 class User {
-  constructor(user) {
-    this.user = user;
+  constructor(mainName, lastName, password, profile, bpi, gcash) {
+    this.mainName = mainName;
   }
 
+  updateUI() {
+    $("#user-profile").html();
+    $("#user-name").html(`${this.mainName} ${this.lastName}`);
+    // $("#$user-gcash").html();
+    // $("#$user-bpi").html();
+  }
   init() {
-    console.log(`${this.user}-table`);
+    Query.queries = JSON.parse(localStorage.getItem(`${this.mainName}-table`));
+    if (Query.queries) {
+      Query.queries.forEach((el) => {
+        let query = new Query(
+          el.date,
+          el.flow,
+          el.mode,
+          el.tags,
+          el.amount,
+          el.description
+        );
+        query.appendRow();
+      });
+    } else {
+      Query.queries = [];
+    }
   }
 }
 
 const user = new User(JSON.stringify(localStorage.getItem("user")));
 user.init();
+user.updateUI();
 
 class Query {
   static queries = [];
@@ -62,13 +84,11 @@ class Query {
       totalAmount += query.flow === "sales" ? query.amount : -query.amount;
     });
 
-    $("#total-amount-label").html("₱" + totalAmount);
+    $("#total-amount-label").html(
+      totalAmount < 0 ? `-₱${Math.abs(totalAmount)}` : `₱${totalAmount}`
+    );
   }
 }
-
-$(".save-table").click(() => {
-  localStorage.setItem("");
-});
 
 let flowValue = "sales";
 $("#submit-query").click((e) => {
@@ -107,6 +127,52 @@ $("#submit-query").click((e) => {
 
     query.appendRow();
   }
+});
+
+class Tag {
+  static tagsArr = [];
+
+  constructor(category, tags, flow) {
+    this.category = category;
+    this.tags = tags;
+    this.flow = flow;
+  }
+
+  static render(flow) {
+    $("#tag-container").empty();
+    const array = Tag.tagsArr.filter((el) => el.flow === flow);
+    array.forEach((el) => {
+      const options = el.tags
+        .map((tag) => `<option value="${tag}">${tag}</option>`)
+        .join("");
+      $("#tag-container").append(`
+        <select class="form-select">
+          <option value="0" selected>${el.category}</option>
+          ${options}
+        </select>
+      `);
+    });
+  }
+}
+
+$(".flow")
+  .toArray()
+  .forEach((flow) => {
+    $(flow).click(() => {
+      if (flow.checked) {
+        flowValue = flow.id;
+      }
+      if (Tag.tagsArr.length !== 0) Tag.render(flowValue);
+      return;
+    });
+  });
+
+$("#save-table").click((e) => {
+  e.preventDefault();
+  localStorage.setItem(
+    `${JSON.stringify(localStorage.getItem("user"))}-table`,
+    JSON.stringify(Query.queries)
+  );
 });
 
 class TagManager {
@@ -152,6 +218,20 @@ class TagManager {
   }
 }
 
+const tagSalesManager = new TagManager(
+  "input-tag-sales-container",
+  "add-tag-sales",
+  "subtract-tag-sales",
+  "sales"
+);
+
+const tagExpensesManager = new TagManager(
+  "input-tag-expenses-container",
+  "add-tag-expenses",
+  "subtract-tag-expenses",
+  "expenses"
+);
+
 class SelectionManager extends TagManager {
   constructor(containerId, addButtonId, subtractButtonId, type, tagNum) {
     super(containerId, addButtonId, subtractButtonId, type);
@@ -175,44 +255,10 @@ class SelectionManager extends TagManager {
   }
 }
 
-const tagSalesManager = new TagManager(
-  "input-tag-sales-container",
-  "add-tag-sales",
-  "subtract-tag-sales",
-  "sales"
-);
-const tagExpensesManager = new TagManager(
-  "input-tag-expenses-container",
-  "add-tag-expenses",
-  "subtract-tag-expenses",
-  "expenses"
-);
-
-class Tag {
-  static tagsArr = [];
-
-  constructor(category, tags, flow) {
-    this.category = category;
-    this.tags = tags;
-    this.flow = flow;
-  }
-
-  static render(flow) {
-    $("#tag-container").empty();
-    const array = Tag.tagsArr.filter((el) => el.flow === flow);
-    array.forEach((el) => {
-      const options = el.tags
-        .map((tag) => `<option value="${tag}">${tag}</option>`)
-        .join("");
-      $("#tag-container").append(`
-        <select class="form-select">
-          <option value="0" selected>${el.category}</option>
-          ${options}
-        </select>
-      `);
-    });
-  }
-}
+$("#log-out").click(() => {
+  localStorage.removeItem("user");
+  window.location.replace("login.html");
+});
 
 $("#save-setting").click(() => {
   const selections = Array.from($(`.input-selection-container`));
@@ -227,23 +273,4 @@ $("#save-setting").click(() => {
   });
 
   Tag.render(flowValue);
-});
-
-$(".flow")
-  .toArray()
-  .forEach((flow) => {
-    $(flow).click(() => {
-      if (flow.checked) {
-        flowValue = flow.id;
-      }
-      if (Tag.tagsArr.length !== 0) Tag.render(flowValue);
-      return;
-    });
-  });
-
-$("#save-table").click(() => {
-  localStorage.setItem(
-    `${JSON.stringify(localStorage.getItem("user"))}-table`,
-    JSON.stringify(Query.queries)
-  );
 });
