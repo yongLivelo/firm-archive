@@ -1,5 +1,6 @@
 class Query {
   static queries = [];
+
   constructor(date, flow, mode, tags, amount, description) {
     this.code = Query.createCode(flow);
     this.date = date;
@@ -11,115 +12,211 @@ class Query {
   }
 
   static createCode(flow) {
-    let flowArr = Query.queries.filter((query) => {
-      return query.flow === flow;
-    });
-
+    const flowArr = Query.queries.filter((query) => query.flow === flow);
     return flowArr.length + 1;
   }
 
-  render() {
-    let stringTable = "";
+  appendRow() {
+    const tagsString = this.tags
+      ? this.tags
+          .map((value) => `<p class="rounded bg-secondary p-2">${value}</p>`)
+          .join("")
+      : "N/A";
+
+    $("#table-query").append(`
+      <tr>
+        <td>${this.code}</td>
+        <td>${this.date}</td>
+        <td>${this.flow}</td>
+        <td>${this.mode}</td>
+        <td>${tagsString}</td>
+        <td>${this.amount}</td>
+        <td>${this.description}</td>
+      </tr>
+    `);
+
+    Query.queries.push(this);
+    Query.updateValues();
+  }
+
+  static updateValues() {
     let totalAmount = 0;
 
     Query.queries.forEach((query) => {
-      let tagsString = "";
-      query.tags.forEach((value) => {
-        tagsString += `<p class="rounded bg-secondary p-2">${value}</p>`;
-      });
-      stringTable += `<tr><td>${query.code}</td><td>${query.date}</td><td>${query.flow}</td><td>${query.mode}</td><td>${tagsString}</td><td>${query.amount}</td><td>${query.description}</td></tr>`;
-
-      if (query.flow === "Expenses") {
-        totalAmount -= query.amount;
-      } else if (query.flow === "Sales") {
-        totalAmount += query.amount;
-      }
+      totalAmount += query.flow === "sales" ? query.amount : -query.amount;
     });
 
-    tableQuery.innerHTML = stringTable;
-    totalAmountLabel.innerHTML = "₱" + totalAmount;
+    $("#total-amount-label").html("₱" + totalAmount);
   }
 }
 
-const submitQuery = document.getElementById("submit-query");
-const dateLabel = document.getElementById("date-label");
-const flowLabel = document.getElementsByName("flow");
-const modeLabel = document.getElementById("mode-label");
-const tagContainer = document.getElementById("tag-container");
-const amountLabel = document.getElementById("amount-label");
-const descriptionLabel = document.getElementById("description-label");
-const tableQuery = document.getElementById("table-query");
-const totalAmountLabel = document.getElementById("total-amount-label");
+let flowValue = "sales";
+$("#submit-query").click((e) => {
+  e.preventDefault();
+  let tags;
+  let acceptTags;
+  if ($("#tag-container").children()[0].id !== "no-tags") {
+    tags = $("#tag-container")
+      .children()
+      .toArray()
+      .map((flow) => flow.options[flow.selectedIndex].value);
+    acceptTags = tags.includes("0");
+  } else {
+    tags = undefined;
+    acceptTags = false;
+  }
 
-let flowValue = "Sales";
-flowLabel.forEach((flow) => {
-  flow.addEventListener("click", (input) => {
-    if (flow.checked) {
-      flowValue = flow.id;
-    }
-    // Hardcoded for now
-    if (flowValue === "Expenses") {
-      tagContainer.innerHTML = `
-      <select id="mode-label" class="form-select">
-      <option value="0" selected>Chart of Accounts</option>
-      <option value="Office Supplies">Office Supplies</option>
-      <option value="Cost of Goods">Cost of Goods</option>
-      <option value="Delivery">Delivery</option></select>`;
-    } else if (flowValue === "Sales") {
-      tagContainer.innerHTML = `
-      <select id="mode-label" class="form-select">
-      <option value="0" selected>Business Account</option>
-      <option value="Bikeshop ni JE">Bikeshop ni JE</option>
-      <option value="JE Bikeshop">JE Bikeshop</option></select>
-
-      <select id="mode-label" class="form-select">
-      <option value="0" selected>Source</option>
-      <option value="Web Store">Web Store</option>
-      <option value="Store">Store</option>
-      <option value="Tiktok">Tiktok</option>
-      <option value="Whole Sale">Whole Sale</option></select>`;
-    }
-  });
-});
-
-submitQuery.addEventListener("click", (event) => {
-  event.preventDefault();
-  const values = [...tagContainer.children].map((flow) => {
-    return flow.options[flow.selectedIndex].value;
-  });
   if (
-    dateLabel.value === " " ||
-    modeLabel.options[modeLabel.selectedIndex].value === "0" ||
-    amountLabel.value === 0 ||
-    values.includes("0")
+    $("#date-label").val() === "" ||
+    $("#mode-label").val() === "0" ||
+    $("#amount-label").val() === 0 ||
+    acceptTags
   ) {
     alert("Missing Input");
   } else {
-    let query = new Query(
-      dateLabel.value,
+    const query = new Query(
+      $("#date-label").val(),
       flowValue,
-      modeLabel.options[modeLabel.selectedIndex].value,
-      values,
-      parseInt(amountLabel.value),
-      descriptionLabel.value === "" ? "N/A" : descriptionLabel.value
+      $("#mode-label").val(),
+      tags,
+      parseInt($("#amount-label").val()),
+      $("#description-label").val() === ""
+        ? "N/A"
+        : $("#description-label").val()
     );
 
-    Query.queries.push(query);
-    query.render();
+    query.appendRow();
   }
 });
 
-const saveSettings = document.getElementById("save-settings");
-saveSettings.addEventListener("click", () => {});
+class TagManager {
+  constructor(containerId, addButtonId, subtractButtonId, type) {
+    this.container = $(`#${containerId}`);
+    this.addButton = $(`#${addButtonId}`);
+    this.subtractButton = $(`#${subtractButtonId}`);
+    this.type = type;
+    this.tagNum = 0;
+    this.addButton.click(() => this.addTag());
+    this.subtractButton.click(() => this.removeTag());
+  }
 
-const saveTable = document.getElementById("save-table");
-saveTable.addEventListener("click", () => {
-  localStorage.setItem("files", JSON.stringify(Query.queries));
+  addTag() {
+    this.tagNum++;
+    this.container.append(`
+      <div id="${this.tagNum}-input-tag" class="input-tag">
+        <div id="${this.tagNum}-input-selection-container-${this.type}" class="input-selection-container" data-type=${this.type}>
+          <input id="${this.tagNum}-category-input" type="text" class="category-input form-control w-auto mb-2" placeholder="Category" />
+          <input id="${this.tagNum}-selection-input-1" type="text" class="selection-input form-control w-auto mb-2" placeholder="Selection 1" />
+          <input id="${this.tagNum}-selection-input-2" type="text" class="selection-input form-control w-auto mb-2" placeholder="Selection 2" />
+        </div>
+        <button id="${this.tagNum}-subtract-input-${this.type}" class="btn btn-secondary mb-2">-</button>
+        <button id="${this.tagNum}-add-input-${this.type}" class="btn btn-secondary mb-2">+</button>
+      </div>
+    `);
+
+    this.selectManager = new SelectionManager(
+      `${this.tagNum}-input-selection-container-${this.type}`,
+      `${this.tagNum}-add-input-${this.type}`,
+      `${this.tagNum}-subtract-input-${this.type}`,
+      this.type,
+      this.tagNum
+    );
+  }
+
+  removeTag() {
+    const lastTag = this.container.children(".input-tag:last");
+    if (lastTag.length) {
+      lastTag.remove();
+      this.tagNum--;
+    }
+  }
+}
+
+class SelectionManager extends TagManager {
+  constructor(containerId, addButtonId, subtractButtonId, type, tagNum) {
+    super(containerId, addButtonId, subtractButtonId, type);
+    this.tagNum = tagNum;
+    this.selectNum = 2;
+  }
+
+  addTag() {
+    this.selectNum++;
+    this.container.append(`
+      <input id="${this.tagNum}-selection-input-${this.selectNum}" type="text" class="selection-input form-control w-auto mb-2 added-selection-input" placeholder="Selection ${this.selectNum}" />
+    `);
+  }
+
+  removeTag() {
+    const lastTag = this.container.children(".added-selection-input:last");
+    if (lastTag.length) {
+      lastTag.remove();
+      this.selectNum--;
+    }
+  }
+}
+
+const tagSalesManager = new TagManager(
+  "input-tag-sales-container",
+  "add-tag-sales",
+  "subtract-tag-sales",
+  "sales"
+);
+const tagExpensesManager = new TagManager(
+  "input-tag-expenses-container",
+  "add-tag-expenses",
+  "subtract-tag-expenses",
+  "expenses"
+);
+
+class Tag {
+  static tagsArr = [];
+
+  constructor(category, tags, flow) {
+    this.category = category;
+    this.tags = tags;
+    this.flow = flow;
+  }
+
+  static render(flow) {
+    $("#tag-container").empty();
+    const array = Tag.tagsArr.filter((el) => el.flow === flow);
+    array.forEach((el) => {
+      const options = el.tags
+        .map((tag) => `<option value="${tag}">${tag}</option>`)
+        .join("");
+      $("#tag-container").append(`
+        <select class="form-select">
+          <option value="0" selected>${el.category}</option>
+          ${options}
+        </select>
+      `);
+    });
+  }
+}
+
+$("#save-setting").click(() => {
+  const selections = Array.from($(`.input-selection-container`));
+  Tag.tagsArr = [];
+  selections.forEach((element) => {
+    const type = element.dataset.type;
+    const tags = Array.from($(element).children(".selection-input")).map(
+      (el) => el.value
+    );
+    const category = $(element).children(".category-input").val();
+    Tag.tagsArr.push(new Tag(category, tags, type));
+  });
+
+  Tag.render(flowValue);
 });
 
-const loadTable = document.getElementById("load-table");
-loadTable.addEventListener("click", () => {
-  const retreieve = localStorage.getItem("files");
-  const query = new Query();
-  query.render();
-});
+$(".flow")
+  .toArray()
+  .forEach((flow) => {
+    $(flow).click(() => {
+      if (flow.checked) {
+        flowValue = flow.id;
+      }
+      if (Tag.tagsArr.length !== 0) Tag.render(flowValue);
+      return;
+    });
+  });

@@ -3,7 +3,6 @@
 - Create Account functionality (Optional, kung kaya ko hehe)
 
 2. Main Data Entry 
--Customizable tags in settings 
 -Add Save Button (Local Storage Only according to account)
 -Editable and deletable Table
 -Sort Table

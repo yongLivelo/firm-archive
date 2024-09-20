@@ -9,6 +9,7 @@
       src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
       defer
     ></script>
+    <script src="../jquery/jquery-3.7.1.js"></script>
     <script src="script.js" defer></script>
   </head>
 
@@ -68,22 +69,22 @@
             </div>
             <div class="form-group mb-2">
               <input
-                type="radio"
-                class="btn-check"
                 name="flow"
-                id="Sales"
+                type="radio"
+                class="btn-check flow"
+                id="sales"
                 autocomplete="off"
                 checked
               />
-              <label class="btn btn-secondary" for="Sales">Sales</label>
+              <label class="btn btn-secondary" for="sales">Sales</label>
               <input
-                type="radio"
-                class="btn-check"
                 name="flow"
-                id="Expenses"
+                type="radio"
+                class="btn-check flow"
+                id="expenses"
                 autocomplete="off"
               />
-              <label class="btn btn-secondary" for="Expenses">Expenses</label>
+              <label class="btn btn-secondary" for="expenses">Expenses</label>
             </div>
             <div class="form-group mb-2">
               <select id="mode-label" class="form-select w-auto">
@@ -94,19 +95,7 @@
               </select>
             </div>
             <div id="tag-container" class="form-group mb-2 d-flex gap-2">
-              <select id="mode-label" class="form-select">
-                <option value="0" selected>Business Account</option>
-                <option value="Bikeshop ni JE">Bikeshop ni JE</option>
-                <option value="JE Bikeshop">JE Bikeshop</option>
-              </select>
-
-              <select id="mode-label" class="form-select">
-                <option value="0" selected>Source</option>
-                <option value="Web Store">Web Store</option>
-                <option value="Store">Store</option>
-                <option value="Tiktok">Tiktok</option>
-                <option value="Whole Sale">Whole Sale</option>
-              </select>
+              <h5 id="no-tags" class="text-light mt-2">No Tag Inputs</h5>
             </div>
             <div class="form-group mb-2">
               <input
@@ -220,15 +209,34 @@
             ></button>
           </div>
           <div class="modal-body">
-            <div class="container mb-4">
-              <div class=""></div>
+            <div class="container">
               <h5>Tags for Sales</h5>
-              <button class="btn btn-secondary">+</button>
+              <div class="container d-flex gap-2">
+                <div id="input-tag-sales-container"></div>
+                <div id="control-tag-sales-container">
+                  <button id="add-tag-sales" class="btn btn-secondary">
+                    +
+                  </button>
+                  <button id="subtract-tag-sales" class="btn btn-secondary">
+                    -
+                  </button>
+                </div>
+              </div>
             </div>
-            <div class="container mb-4">
-              <div class=""></div>
+
+            <div class="container">
               <h5>Tags for Expenses</h5>
-              <button class="btn btn-secondary">+</button>
+              <div class="container d-flex gap-2">
+                <div id="input-tag-expenses-container"></div>
+                <div id="control-tag-expenses-container">
+                  <button id="add-tag-expenses" class="btn btn-secondary">
+                    +
+                  </button>
+                  <button id="subtract-tag-expenses" class="btn btn-secondary">
+                    -
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
           <div class="modal-footer d-flex justify-content-between">
@@ -247,7 +255,7 @@
               >
                 Close
               </button>
-              <button id="save-settings" type="button" class="btn btn-primary">
+              <button id="save-setting" type="button" class="btn btn-primary">
                 Save changes
               </button>
             </div>
