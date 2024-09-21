@@ -1,6 +1,23 @@
+$("#log-out").click(() => {
+  localStorage.removeItem("user");
+  window.location.replace("login.html");
+});
+
+class User {
+  constructor(user) {
+    this.user = user;
+  }
+
+  init() {
+    console.log(`${this.user}-table`);
+  }
+}
+
+const user = new User(JSON.stringify(localStorage.getItem("user")));
+user.init();
+
 class Query {
   static queries = [];
-
   constructor(date, flow, mode, tags, amount, description) {
     this.code = Query.createCode(flow);
     this.date = date;
@@ -34,7 +51,6 @@ class Query {
         <td>${this.description}</td>
       </tr>
     `);
-
     Query.queries.push(this);
     Query.updateValues();
   }
@@ -49,6 +65,10 @@ class Query {
     $("#total-amount-label").html("₱" + totalAmount);
   }
 }
+
+$(".save-table").click(() => {
+  localStorage.setItem("");
+});
 
 let flowValue = "sales";
 $("#submit-query").click((e) => {
@@ -220,3 +240,10 @@ $(".flow")
       return;
     });
   });
+
+$("#save-table").click(() => {
+  localStorage.setItem(
+    `${JSON.stringify(localStorage.getItem("user"))}-table`,
+    JSON.stringify(Query.queries)
+  );
+});

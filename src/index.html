@@ -58,7 +58,7 @@
 
     <div data-bs-theme="dark" class="container-fluid min-vh-100 bg-primary p-4">
       <div class="row mb-4">
-        <div class="col">
+        <div class="col-8">
           <form>
             <div class="form-group mb-2">
               <input
@@ -132,12 +132,9 @@
             <button id="save-table" type="submit" class="btn btn-secondary">
               Save
             </button>
-            <button id="load-table" type="submit" class="btn btn-secondary">
-              Load
-            </button>
           </form>
         </div>
-        <div class="col">
+        <div class="col-4">
           <div class="card">
             <div class="container-fluid text-center">
               <img
@@ -163,7 +160,7 @@
       </div>
 
       <div class="row mb-4">
-        <div class="col">
+        <div class="col-10">
           <table class="table">
             <thead>
               <tr>
@@ -179,7 +176,7 @@
             <tbody id="table-query"></tbody>
           </table>
         </div>
-        <div class="col">
+        <div class="col-2">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Total</h5>
@@ -244,6 +241,7 @@
               type="button"
               class="btn btn-secondary"
               data-bs-dismiss="modal"
+              id="log-out"
             >
               Logout
             </button>
