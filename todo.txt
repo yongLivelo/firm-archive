@@ -47,11 +47,17 @@ Object-oriented Programming
 -Creates a useful blueprint for managing databases
 -makes every code for each component easy to read and debug, but quite verbose
 
+Tools used:
+-mySQL (possibly) - SQL
+-Jquery - Javascript
+-Bootstrap - CSS/HTML
+
 V.
 A. Hardware Requirements
 -Any device that has browser support (PC, Phone, Laptop, etc.) 
 
-B. Software Requirements
+B. Software Requirements 
+OS: Windows, Linux and Mac 
 Tested Browsers with No Issues:
 -Chrome 124.
 -Safari 17.4.
@@ -60,8 +66,4 @@ Tested Browsers with No Issues:
 -Opera 109.
 
 C. Others
-Tools used:
--mySQL (possibly) - SQL
--Jquery - Javascript
--Bootstrap - CSS/HTML
 ////////////////////

@@ -1,43 +1,3 @@
-$("#log-in").click(() => {
-  const username = $("#username").val();
-  const password = $("#password").val();
-});
-
-class User {
-  constructor(mainName, lastName, password, profile, bpi, gcash) {
-    this.mainName = mainName;
-  }
-
-  updateUI() {
-    $("#user-profile").html();
-    $("#user-name").html(`${this.mainName} ${this.lastName}`);
-    // $("#$user-gcash").html();
-    // $("#$user-bpi").html();
-  }
-  init() {
-    Query.queries = JSON.parse(localStorage.getItem(`${this.mainName}-table`));
-    if (Query.queries) {
-      Query.queries.forEach((el) => {
-        let query = new Query(
-          el.date,
-          el.flow,
-          el.mode,
-          el.tags,
-          el.amount,
-          el.description
-        );
-        query.appendRow();
-      });
-    } else {
-      Query.queries = [];
-    }
-  }
-}
-
-const user = new User(JSON.stringify(localStorage.getItem("user")));
-user.init();
-user.updateUI();
-
 class Query {
   static queries = [];
   constructor(date, flow, mode, tags, amount, description) {
@@ -89,6 +49,47 @@ class Query {
     );
   }
 }
+$("#log-out").click(() => {
+  localStorage.removeItem("user");
+  window.location.replace("login.html");
+});
+
+class User {
+  constructor(user) {
+    this.user = user;
+  }
+
+  updateUI() {
+    $("#user-profile").attr({ src: `${this.user.profile}` });
+    $("#user-name").html(`${this.user.firstName} ${this.user.lastName}`);
+    $("#user-gcash").html(`${this.user.gcash}`);
+    $("#user-bpi").html(`${this.user.bpi}`);
+  }
+  init() {
+    Query.queries = JSON.parse(
+      localStorage.getItem(`${this.user.firstName}-table`)
+    );
+    if (Query.queries) {
+      Query.queries.forEach((el) => {
+        let query = new Query(
+          el.date,
+          el.flow,
+          el.mode,
+          el.tags,
+          el.amount,
+          el.description
+        );
+        query.appendRow();
+      });
+    } else {
+      Query.queries = [];
+    }
+  }
+}
+
+const user = new User(JSON.parse(localStorage.getItem("user")));
+user.init();
+user.updateUI();
 
 let flowValue = "sales";
 $("#submit-query").click((e) => {
@@ -170,7 +171,7 @@ $(".flow")
 $("#save-table").click((e) => {
   e.preventDefault();
   localStorage.setItem(
-    `${JSON.stringify(localStorage.getItem("user"))}-table`,
+    `${JSON.parse(localStorage.getItem("user")).firstName}-table`,
     JSON.stringify(Query.queries)
   );
 });
@@ -254,11 +255,6 @@ class SelectionManager extends TagManager {
     }
   }
 }
-
-$("#log-out").click(() => {
-  localStorage.removeItem("user");
-  window.location.replace("login.html");
-});
 
 $("#save-setting").click(() => {
   const selections = Array.from($(`.input-selection-container`));
