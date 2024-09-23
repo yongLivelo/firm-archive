@@ -20,8 +20,6 @@ Functionalities
     - Moveable
     - Editable
     - Sortable
-- Turn Table Data into CSV File
-- Limit Table to 10 Rows, it will be divided into sections and can go through them with added controls
 
 3. Statistical Analysis
 - Bar Graph 
@@ -30,9 +28,6 @@ for the
 - Pie Chart 
     - Shows the percentage of Expenses and Sales
 
-4. History Section
-- Overview of the whole Table
-- Search Functionality
 ////////////////////
 
 ////////////////////

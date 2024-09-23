@@ -1,0 +1,12 @@
+$primary: #181c14;
+$secondary: #3c3d37;
+
+.dt-buttons {
+  display: none !important;
+}
+
+html,
+body {
+  height: 100%;
+}
+@import "node_modules/bootstrap/scss/bootstrap";

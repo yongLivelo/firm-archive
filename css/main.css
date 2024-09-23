@@ -1,4 +1,8 @@
 @charset "UTF-8";
+.dt-buttons {
+  display: none !important;
+}
+
 html,
 body {
   height: 100%;
