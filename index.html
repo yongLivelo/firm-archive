@@ -18,7 +18,7 @@
   <body>
     <nav data-bs-theme="dark" class="navbar navbar-expand-lg bg-secondary">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">Firm Archive</a>
+        <a class="navbar-brand" href="index.html">Firm Archive</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -33,10 +33,12 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
+              <a class="nav-link active" aria-current="page" href="index.html"
+                >Home</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Statistics</a>
+              <a class="nav-link" href="statistics.html">Statistics</a>
             </li>
           </ul>
 
@@ -118,31 +120,30 @@
               ></textarea>
             </div>
 
-            <button id="add-table-row" type="submit" class="btn btn-secondary">
+            <button id="add-row" type="submit" class="btn btn-secondary">
               Enter
             </button>
             <button id="export-csv" type="submit" class="btn btn-secondary">
               Get CSV File
             </button>
-            <button id="save-user" type="submit" class="btn btn-secondary">
-              Save
+            <button id="save-table" type="submit" class="btn btn-secondary">
+              Save Table
             </button>
-            <button
-              id="delete-table-row"
-              type="submit"
-              class="btn btn-secondary"
-            >
+            <button id="delete-row" type="submit" class="btn btn-secondary">
               Delete
             </button>
-            <button id="save-user" type="submit" class="btn btn-secondary">
+            <button id="edit-row" type="submit" class="btn btn-secondary">
               Edit
             </button>
           </form>
         </div>
         <div class="col-4">
           <div class="card">
-            <div class="container p-4">
-              <div class="container">
+            <div
+              class="container p-4"
+              style="height: 320px; overflow-y: auto; overflow-x: hidden"
+            >
+              <div class="container mb-4">
                 <h5>Tags for Sales</h5>
                 <div class="container d-flex gap-2">
                   <div id="input-tag-sales-container"></div>
@@ -157,7 +158,7 @@
                 </div>
               </div>
 
-              <div class="container">
+              <div class="container mb-4">
                 <h5>Tags for Expenses</h5>
                 <div class="container d-flex gap-2">
                   <div id="input-tag-expenses-container"></div>
@@ -175,8 +176,8 @@
                 </div>
               </div>
 
-              <button id="save-settings" type="button" class="btn btn-primary">
-                Save changes
+              <button id="save-tags" type="button" class="btn btn-primary">
+                Save Tags
               </button>
             </div>
           </div>
@@ -214,6 +215,12 @@
             <div class="card-body">
               <h5 class="card-title">Total</h5>
               <p id="total-amount-label" class="card-text">₱0</p>
+
+              <h5 class="card-title">Total Expenses</h5>
+              <p id="total-sales-label" class="card-text">₱0</p>
+
+              <h5 class="card-title">Total Sales</h5>
+              <p id="total-expenses-label" class="card-text">₱0</p>
             </div>
           </div>
         </div>

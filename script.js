@@ -1,3 +1,13 @@
+// ********************
+// ********************
+// MAIN ENTRY PAGE
+// ********************
+// ********************
+//
+//
+// Table
+//
+//
 class Table {
   static table = new DataTable("#main-table", {
     dom: "Bfrtip",
@@ -31,7 +41,16 @@ class Table {
       {
         data: "tags",
         render: (data) => {
-          return data;
+          try {
+            let string = "";
+            data.forEach((tag) => {
+              console.log();
+              string += `<p class="rounded bg-secondary p-2 fit-content">${tag.category}:  ${tag.selected}</p>`;
+            });
+            return string;
+          } catch (e) {
+            return data;
+          }
         },
       },
       {
@@ -50,152 +69,259 @@ class Table {
   });
 
   constructor(date, flow, mode, tags, amount, description) {
-    this.code = Table.createCode(flow);
     this.date = date;
     this.flow = flow;
     this.mode = mode;
     this.tags = tags;
     this.amount = amount;
     this.description = description;
+
+    this.code = this.createCode();
   }
 
   static init() {
     Table.table.on("draw", Table.updateValues);
-
     $("#main-table tbody").on("click", "tr", function () {
       $(this).toggleClass("selected");
     });
-
-    $("#delete-table-row").click(function (e) {
-      e.preventDefault();
-      Table.table.rows(".selected").remove().draw;
-    });
-  }
-
-  static createCode(flow) {
-    const flowArr = Table.table
-      .data()
-      .toArray()
-      .filter((row) => row.flow === flow);
-
-    return flowArr.length + 1;
-  }
-
-  addRow() {
-    Table.table.row.add(this).draw();
   }
 
   static updateValues() {
-    let totalAmount = 0;
+    let total = {
+      amount: 0,
+      expenses: 0,
+      sales: 0,
+    };
+
     Table.table
       .data()
       .toArray()
       .forEach((row) => {
-        totalAmount += row.flow === "sales" ? row.amount : -row.amount;
+        total.amount += row.flow === "sales" ? row.amount : -row.amount;
+        total.sales += row.flow === "sales" ? row.amount : 0;
+        total.expenses += row.flow === "expenses" ? row.amount : 0;
       });
 
     $("#total-amount-label").html(
-      totalAmount < 0 ? `-₱${Math.abs(totalAmount)}` : `₱${totalAmount}`
+      total.amount < 0 ? `-₱${Math.abs(total.amount)}` : `₱${total.amount}`
     );
+    $("#total-sales-label").html(`₱${total.sales}`);
+    $("#total-expenses-label").html(`₱${total.expenses}`);
+  }
+
+  createCode() {
+    const flowArr = Table.table
+      .data()
+      .toArray()
+      .filter((row) => row.flow === this.flow);
+
+    return ++flowArr.length;
+  }
+
+  renderRow() {
+    Table.table.row.add(this).draw();
   }
 }
 Table.init();
-// $(".buttons-csv").remove();
-$("#export-csv").on("click", function (e) {
-  e.preventDefault();
-  Table.table.button(".buttons-csv").trigger();
-});
-
+//
+//
+// Table
+//
+//
+// ********************
+//
+//
+// Table Controls
+//
+//
 class TableControls {
   static flowValue = $(`input[name='flow']:checked`).val();
-  constructor() {
-    $(".flow").each((_, el) => $(el).click(this.handleFlow));
-    $("#add-table-row").click((e) => this.sumbitQuery(e));
+
+  static init() {
+    $(`input[name='flow']`).change(this.handleFlow);
+
+    $("#add-row").click((e) => this.addRow(e));
+
+    $("#save-table").click((e) => this.saveTable(e));
+
+    $("#export-csv").on("click", (e) => this.exportCsv(e));
+
+    $("#delete-row").click((e) => this.deleteRow(e));
+
+    $("#edit-row").click((e) => this.editRow(e));
   }
 
-  handleFlow() {
-    TableControls.flowValue = $(`input[name='flow']:checked`).val();
+  static addRow(e) {
+    e.preventDefault();
 
-    if (Tag.tags.length !== 0) {
-      Tag.render(TableControls.flowValue);
+    const date = $("#date-label").val();
+    const flow = TableControls.flowValue;
+    const mode = $("#mode-label").val();
+    const tags = TableControls.handleTags();
+    const amount = parseInt($("#amount-label").val());
+    const description = $("#description-label").val() || "N/A";
+
+    if (date && mode !== "0" && tags && amount) {
+      const row = new Table(date, flow, mode, tags, amount, description);
+      row.renderRow();
+    } else {
+      alert("Invalid Input");
     }
   }
 
-  handleTags() {
+  static saveTable(e) {
+    e.preventDefault();
+    const saveTable = Table.table.data().toArray();
+    localStorage.setItem(
+      `${JSON.parse(localStorage.getItem("user")).username}-table`,
+      JSON.stringify(saveTable)
+    );
+  }
+
+  static exportCsv(e) {
+    e.preventDefault();
+    Table.table.button(".buttons-csv").trigger();
+  }
+
+  static deleteRow(e) {
+    e.preventDefault();
+    Table.table.rows(".selected").remove().draw();
+  }
+
+  static editRow(e) {
+    e.preventDefault;
+    // Not Yet Functional
+  }
+
+  static handleFlow() {
+    TableControls.flowValue = this.value;
+    Tag.renderInput();
+  }
+
+  static handleTags() {
     if ($("#no-tags").length) return "N/A";
 
     const tags = $("#tag-container")
       .children()
       .toArray()
-      .map((flow) => flow.value);
-    return tags.length && !tags.includes("0") ? tags : false;
-  }
+      .map((selection) => {
+        const tagObject = {
+          category: $(selection).children(".category").html(),
+          selected: selection.value,
+        };
+        if (tagObject.selected === "0") return null;
+        return tagObject;
+      });
 
-  sumbitQuery(e) {
-    e.preventDefault();
-    const date = $("#date-label").val();
-    const mode = $("#mode-label").val();
-    const tags = this.handleTags();
-    const amount = parseInt($("#amount-label").val());
-    const description = $("#description-label").val() || "N/A";
-    if (tags && date && mode !== "0" && amount) {
-      const row = new Table(
-        date,
-        TableControls.flowValue,
-        mode,
-        tags,
-        amount,
-        description
-      );
-      row.addRow(row);
-    } else {
-      alert("Missing Input");
-    }
+    console.log(tags);
+    return tags.includes(null) ? false : tags;
   }
 }
-const tableControls = new TableControls();
-
+TableControls.init();
+//
+//
+// Table Controls
+//
+//
+// ********************
+//
+//
+// Tags
+//
+//
 class Tag {
-  static tags = [];
+  static tags = { expenses: [], sales: [] };
 
   constructor(category, tags, flow) {
     this.category = category;
     this.tags = tags;
-    this.flow = flow;
+
+    switch (flow) {
+      case "expenses":
+        Tag.tags.expenses.push(this);
+        break;
+      case "sales":
+        Tag.tags.sales.push(this);
+        break;
+    }
   }
 
-  static render(flow) {
-    $("#tag-container").empty();
-    const array = Tag.tags.filter((el) => el.flow === flow);
-    array.forEach((el) => {
-      const options = el.tags
-        .map((tag) => `<option value="${tag}">${tag}</option>`)
-        .join("");
-      $("#tag-container").append(`
-        <select class="form-select">
-          <option value="0" selected>${el.category}</option>
-          ${options}
-        </select>
-      `);
+  static init() {
+    $("#save-tags").click(() => this.save());
+  }
+
+  static save() {
+    const tagInputs = Array.from($(`.input-selection-container`));
+    Tag.tags.expenses = [];
+    Tag.tags.sales = [];
+
+    tagInputs.forEach((element) => {
+      const type = element.dataset.type;
+      const category = $(element).children(".category-input").val();
+      const tags = Array.from($(element).children(".selection-input")).map(
+        (el) => $(el).val()
+      );
+      new Tag(category, tags, type);
     });
+
+    localStorage.setItem(
+      `${JSON.parse(localStorage.getItem("user")).username}-tags`,
+      JSON.stringify(Tag.tags)
+    );
+    this.renderInput();
+  }
+
+  static renderInput() {
+    $("#tag-container").empty();
+
+    const tagArr =
+      TableControls.flowValue === "sales" ? Tag.tags.sales : Tag.tags.expenses;
+    if (tagArr.length) {
+      tagArr.forEach((el) => {
+        const options = el.tags
+          .map((tag) => `<option value="${tag}">${tag}</option>`)
+          .join("");
+        $("#tag-container").append(`
+          <select class="form-select">
+            <option value="0" class="category" selected>${el.category}</option>
+            ${options}
+          </select>
+        `);
+      });
+    } else {
+      $("#tag-container").html(
+        `<h5 id="no-tags" class="text-light mt-2">No Tag Inputs</h5>`
+      );
+    }
   }
 }
 
+Tag.init();
+//
+//
+// Tags
+//
+//
+// ********************
+//
+//
+// Tag Manager
+//
+//
 class TagManager {
   constructor(containerId, addButtonId, subtractButtonId, type) {
     this.container = $(`#${containerId}`);
-    this.addButton = $(`#${addButtonId}`);
-    this.subtractButton = $(`#${subtractButtonId}`);
+    $(`#${addButtonId}`).click(() => this.addTag());
+    $(`#${subtractButtonId}`).click(() => this.removeTag());
     this.type = type;
     this.tagNum = 0;
-    this.addButton.click(() => this.addTag());
-    this.subtractButton.click(() => this.removeTag());
   }
 
   addTag() {
     this.tagNum++;
     this.container.append(`
-      <div id="${this.tagNum}-input-tag" class="input-tag">
+      <div id=
+      "${this.tagNum}-input-tag" class="input-tag">
         <div id="${this.tagNum}-input-selection-container-${this.type}" class="input-selection-container" data-type=${this.type}>
           <input id="${this.tagNum}-category-input" type="text" class="category-input form-control w-auto mb-2" placeholder="Category" />
           <input id="${this.tagNum}-selection-input-1" type="text" class="selection-input form-control w-auto mb-2" placeholder="Selection 1" />
@@ -222,6 +348,8 @@ class TagManager {
       this.tagNum--;
     }
   }
+
+  static renderEditInput(tags) {}
 }
 
 const tagSalesManager = new TagManager(
@@ -260,30 +388,20 @@ class SelectionManager extends TagManager {
     }
   }
 }
-
+//
+//
+// Tag Manager
+//
+//
+// ********************
+//
+//
+// User
+//
+//
 class User {
   constructor(user) {
     this.user = user;
-    $("#save-user").click((e) => this.saveUser(e));
-    $("#log-out").click(this.logOut);
-  }
-
-  logOut() {
-    localStorage.removeItem("user");
-    window.location.replace("login.html");
-  }
-
-  saveUser(e) {
-    e.preventDefault();
-    const saveInfo = {
-      table: Table.table.data().toArray(),
-      tags: Tag.tags,
-    };
-
-    localStorage.setItem(
-      `${JSON.parse(localStorage.getItem("user")).firstName}-info`,
-      JSON.stringify(saveInfo)
-    );
   }
 
   init() {
@@ -293,14 +411,13 @@ class User {
       $("#user-gcash").html(`${this.user.gcash}`);
       $("#user-bpi").html(`${this.user.bpi}`);
 
-      const saveInfo = JSON.parse(
-        localStorage.getItem(`${this.user.firstName}-info`)
-      );
-      console.log(saveInfo.table);
-      Table.table.rows.add(saveInfo.table).draw();
-      Tag.tags = saveInfo.tags;
+      const saveInfo = {
+        table: JSON.parse(localStorage.getItem(`${this.user.username}-table`)),
+        tags: JSON.parse(localStorage.getItem(`${this.user.username}-tags`)),
+      };
 
-      console.log();
+      Table.table.rows.add(saveInfo?.table).draw();
+      TagManager.renderEditInput(saveInfo?.tags);
     } catch (e) {}
   }
 }
@@ -309,24 +426,91 @@ const user = new User(JSON.parse(localStorage.getItem("user")));
 user.init();
 
 class Setting {
-  constructor() {
-    $("#save-settings").click(() => this.saveSetting());
+  static init() {
+    $("#log-out").click(this.logOut);
   }
 
-  saveSetting() {
-    const selections = Array.from($(`.input-selection-container`));
-    Tag.tags = [];
-    selections.forEach((element) => {
-      const type = element.dataset.type;
-      const tags = Array.from($(element).children(".selection-input")).map(
-        (el) => el.value
-      );
-      const category = $(element).children(".category-input").val();
-      Tag.tags.push(new Tag(category, tags, type));
-    });
-
-    Tag.render(TableControls.flowValue);
+  static logOut() {
+    localStorage.removeItem("user");
+    window.location.replace("login.html");
   }
 }
+Setting.init();
+//
+//
+// User
+//
+//
 
-const setting = new Setting();
+// ********************
+// ********************
+// STATISICS
+// ********************
+// ********************
+//
+//
+// Bar Graph
+//
+//
+const data = [
+  { year: 2010, count: 10 },
+  { year: 2011, count: 20 },
+  { year: 2012, count: 15 },
+  { year: 2013, count: 25 },
+  { year: 2014, count: 22 },
+  { year: 2015, count: 30 },
+  { year: 2016, count: 28 },
+];
+
+new Chart($("#bar-graph"), {
+  type: "bar",
+  data: {
+    labels: data.map((row) => row.year),
+    datasets: [
+      {
+        label: "Acquisitions by year",
+        data: data.map((row) => row.count),
+      },
+    ],
+  },
+});
+//
+//
+// Bar Graph
+//
+//
+// ********************
+//
+//
+// Pie Graph
+//
+//
+const data2 = [
+  { year: 2010, count: 10 },
+  { year: 2011, count: 20 },
+  { year: 2012, count: 15 },
+  { year: 2013, count: 25 },
+  { year: 2014, count: 22 },
+  { year: 2015, count: 30 },
+  { year: 2016, count: 28 },
+];
+
+new Chart(document.getElementById("pie-graph"), {
+  type: "pie",
+  data: {
+    labels: data.map((row) => row.year),
+    datasets: [
+      {
+        label: "Acquisitions by year",
+        data: data.map((row) => row.count),
+      },
+    ],
+  },
+});
+//
+//
+// Pie Graph
+//
+//
+// ********************
+// ********************

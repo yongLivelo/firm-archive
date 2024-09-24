@@ -2,11 +2,12 @@ $("#log-in").click(() => {
   const username = $("#username").val();
   const password = $("#password").val();
 
-  if (username === "julio" && password === "1234") {
+  if (username === "yongk1n" && password === "1234") {
     window.location.replace("index.html");
     localStorage.setItem(
       "user",
       JSON.stringify({
+        username: "yongk1n",
         firstName: "Julio",
         lastName: "Livelo",
         profile:
@@ -15,30 +16,32 @@ $("#log-in").click(() => {
         bpi: "6717237676",
       })
     );
-  } else if (username === "gambit" && password === "pangit") {
+  } else if (username === "jebikeshop" && password === "admin") {
     window.location.replace("index.html");
     localStorage.setItem(
       "user",
       JSON.stringify({
-        firstName: "jebikeshop",
-        lastName: "admin1",
+        username: "jebikeshop",
+        firstName: "JE",
+        lastName: "Bikeshop",
         profile:
           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRROJR6NsnojBhvvKtY_gBuAUOFtwjgJUvcOg&s",
         gcash: "0903030303",
         bpi: "6969696969",
       })
     );
-  } else if (username === "vince" && password === "Jermay22") {
+  } else if (username === "lotusuto" && password === "1022") {
     window.location.replace("index.html");
     localStorage.setItem(
       "user",
       JSON.stringify({
-        firstName: "Vince",
-        lastName: "Cang",
+        username: "lotusuto",
+        firstName: "lotus",
+        lastName: "suto",
         profile:
-          "https://preview.redd.it/60gq0n0dt9j91.png?width=1140&format=png&auto=webp&s=dfd3ab3c74b0e97df65842ccb9bd12917d7f8a09",
-        gcash: "N/A",
-        bpi: "N/A",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRROJR6NsnojBhvvKtY_gBuAUOFtwjgJUvcOg&s",
+        gcash: "09175142780",
+        bpi: "696 894 76",
       })
     );
   } else {
