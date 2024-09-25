@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Firm Archive</title>
+    <script defer src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <link rel="icon" href="/assets/icon.png" type="image/icon type" />
+    <!-- Bootstrap -->
+    <!-- prettier-ignore -->
+    <script defer src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="../css/main.css" />
+    <!-- DataTables -->
+    <!-- prettier-ignore -->
+    <script defer type="module" src=""></script>
+    <!-- prettier-ignore -->
+    <link rel="stylesheet" href=""/>
+    <!-- Javascript -->
+    <!-- prettier-ignore -->
+    <script defer type="module" src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script defer type="module" src="script.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg shadow-sm">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">Firm Archive</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="index.html"
+                >Home</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="statistics.html">Statistics</a>
+            </li>
+          </ul>
+          <div class="navbar-nav mb-2 mb-lg-0">
+            <img
+              data-bs-toggle="modal"
+              data-bs-target="#settings"
+              id="setting-btn"
+              style="width: 40px; cursor: pointer"
+              src="assets/settings.png"
+              alt="Settings"
+            />
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="bg-light container-fluid vh-100 p-4">
+      <div class="row mb-lg-4">
+        <div class="col-lg-8 mb-4 mb-lg-0 order-2 order-lg-1">
+          <div class="card shadow">
+            <div class="card-body">
+              <form>
+                <div class="form-group mb-2">
+                  <input
+                    id="date-label"
+                    class="form-control"
+                    type="datetime-local"
+                  />
+                </div>
+                <div class="form-group mb-2">
+                  <input
+                    name="flow"
+                    type="radio"
+                    class="btn-check"
+                    value="sales"
+                    id="sales"
+                    autocomplete="off"
+                    checked
+                  />
+                  <label class="btn btn-secondary" for="sales">Sales</label>
+                  <input
+                    name="flow"
+                    type="radio"
+                    class="btn-check"
+                    value="expenses"
+                    id="expenses"
+                    autocomplete="off"
+                  />
+                  <label class="btn btn-secondary" for="expenses"
+                    >Expenses</label
+                  >
+                </div>
+                <div class="form-group mb-2">
+                  <select id="mode-label" class="form-select">
+                    <option value="0" selected>Select mode of payment</option>
+                    <option value="BPI">BPI</option>
+                    <option value="Gcash">Gcash</option>
+                    <option value="Cash">Cash</option>
+                  </select>
+                </div>
+                <div
+                  id="tag-container"
+                  class="form-group mb-2 rounded p-2 bg-light d-flex gap-2"
+                >
+                  <h5 id="no-tags" class="mt-2">No Tag Inputs</h5>
+                </div>
+                <div class="form-group mb-2">
+                  <input
+                    type="number"
+                    min="1"
+                    step="any"
+                    class="form-control"
+                    id="amount-label"
+                    placeholder="Enter Amount"
+                  />
+                </div>
+                <div class="form-group mb-2">
+                  <textarea
+                    rows="3"
+                    class="form-control"
+                    id="description-label"
+                    placeholder="Enter Description"
+                  ></textarea>
+                </div>
+              </form>
+            </div>
+
+            <div class="card-footer p-3">
+              <div class="d-flex gap-2">
+                <button id="add-row" type="submit" class="btn btn-secondary">
+                  Add
+                </button>
+                <button id="export-csv" type="button" class="btn btn-secondary">
+                  Get CSV File
+                </button>
+                <button id="save-table" type="button" class="btn btn-secondary">
+                  Save Table
+                </button>
+                <button id="delete-row" type="button" class="btn btn-secondary">
+                  Delete
+                </button>
+                <button id="edit-row" type="button" class="btn btn-secondary">
+                  Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 mb-4 mb-lg-0 order-1 order-lg-2">
+          <div class="card shadow">
+            <div class="card-header p-3">
+              <h2>Tags</h2>
+            </div>
+
+            <div class="card-body" style="height: 300px; overflow-y: auto">
+              <div class="row mb-4">
+                <h5>Sales</h5>
+                <div class="d-flex gap-2">
+                  <div id="input-tag-sales-container"></div>
+                  <div id="control-tag-sales-container">
+                    <button id="add-tag-sales" class="btn btn-secondary mb-2">
+                      +
+                    </button>
+                    <button
+                      id="subtract-tag-sales"
+                      class="btn btn-secondary mb-2"
+                    >
+                      -
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-4">
+                <h5>Expenses</h5>
+                <div class="d-flex gap-2">
+                  <div id="input-tag-expenses-container"></div>
+                  <div id="control-tag-expenses-container">
+                    <button
+                      id="add-tag-expenses"
+                      class="btn btn-secondary mb-2"
+                    >
+                      +
+                    </button>
+                    <button
+                      id="subtract-tag-expenses"
+                      class="btn btn-secondary mb-2"
+                    >
+                      -
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer p-3">
+              <button id="save-tags" type="button" class="btn btn-secondary">
+                Save Tags
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-lg-4">
+        <div class="col-lg-10 mb-4 mb-lg-0">
+          <div class="card shadow">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table id="main-table" class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">Code</th>
+                      <th scope="col">Date</th>
+                      <th scope="col">Flow</th>
+                      <th scope="col">Mode</th>
+                      <th scope="col">Tags</th>
+                      <th scope="col">Amount</th>
+                      <th scope="col">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-2 mb-4 mb-lg-0">
+          <div class="card shadow">
+            <div class="card-body">
+              <h4 class="card-title">Total</h4>
+              <p id="total-amount-label" class="card-text fs-1">₱0</p>
+
+              <h5 class="card-title">Total Expenses</h5>
+              <p id="total-sales-label" class="card-text">₱0</p>
+
+              <h5 class="card-title">Total Sales</h5>
+              <p id="total-expenses-label" class="card-text">₱0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="settings"
+      tabindex="-1"
+      aria-labelledby="settings-label"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="settings-label">Settings</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="container-fluid text-center">
+              <img
+                id="user-profile"
+                alt="avatar"
+                class="rounded-circle"
+                style="width: 150px; height: 150px; object-fit: cover"
+              />
+              <h5 id="user-name" class="my-3"></h5>
+              <div class="row">
+                <div class="col">
+                  <h6>Gcash Number</h6>
+                  <p id="user-gcash" class="blurred"></p>
+                </div>
+                <div class="col">
+                  <h6>BPI Savings Account</h6>
+                  <p id="user-bpi" class="blurred"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-secondary" id="log-out">
+              Logout
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

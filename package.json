@@ -1,7 +1,7 @@
 {
+  "type": "module",
   "dependencies": {
     "bootstrap": "^5.3.3",
-    "datatables.net-autofill-dt": "^2.7.0",
-    "datatables.net-dt": "^2.1.7"
+    "jquery": "^3.7.1"
   }
 }
