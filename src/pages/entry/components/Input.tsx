@@ -5,12 +5,12 @@ import {
   FormControl,
   FormGroup,
   FormSelect,
+  ButtonGroup,
+  ToggleButton,
+  Form,
+  Card,
+  Button,
 } from "react-bootstrap";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
-import ToggleButton from "react-bootstrap/ToggleButton";
-import Form from "react-bootstrap/Form";
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
 import { TableContext } from "../../../App";
 import { Row, Tags } from "../../../interface";
 
@@ -87,7 +87,9 @@ function Input() {
 
   const editRows = () => {};
 
-  const saveTable = () => {};
+  const saveTable = () => {
+    localStorage.setItem("save", JSON.stringify(table?.data?.data().toArray()));
+  };
 
   const getCSV = () => {};
 

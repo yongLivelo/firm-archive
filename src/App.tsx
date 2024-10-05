@@ -4,7 +4,7 @@ import Statistics from "./pages/statistics/Statistics";
 import Archive from "./pages/archive/Archive";
 import Authentication from "./pages/authentication/Authentication";
 import NoPage from "./pages/NoPage";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { Api } from "datatables.net-bs5";
 
 interface TableContextType {
@@ -17,6 +17,7 @@ export const TableContext = createContext<TableContextType | undefined>(
 );
 function App() {
   const [data, setData] = useState<Api | undefined | null>(undefined);
+
   return (
     <>
       <TableContext.Provider value={{ data, setData }}>

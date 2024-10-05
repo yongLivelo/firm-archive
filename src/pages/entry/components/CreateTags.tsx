@@ -1,6 +1,13 @@
-import { CardBody, CardFooter, CardHeader, CardTitle } from "react-bootstrap";
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
+import {
+  Button,
+  Row,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  CardTitle,
+} from "react-bootstrap";
+
 function CreateTags() {
   return (
     <>
@@ -9,47 +16,30 @@ function CreateTags() {
           <h2>Tags</h2>
         </CardHeader>
         <CardBody style={{ height: "300px", overflowY: "auto" }}>
-          <div className="row mb-4">
+          <Row className="mb-4">
             <CardTitle>Sales</CardTitle>
-            <div className="d-flex gap-2">
-              <div id="input-tag-sales-container"></div>
-              <div id="control-tag-sales-container">
-                <button id="add-tag-sales" className="btn btn-secondary mb-2">
-                  +
-                </button>
-                <button
-                  id="subtract-tag-sales"
-                  className="btn btn-secondary mb-2"
-                >
-                  -
-                </button>
+            <div className="">
+              <div></div>
+              <div className="d-flex gap-2">
+                <Button className="square">+</Button>
+                <Button className="square">-</Button>
               </div>
             </div>
-          </div>
+          </Row>
 
-          <div className="row mb-4">
+          <Row className="mb-4">
             <CardTitle>Expenses</CardTitle>
-            <div className="d-flex gap-2">
-              <div id="input-tag-expenses-container"></div>
-              <div id="control-tag-expenses-container">
-                <button
-                  id="add-tag-expenses"
-                  className="btn btn-secondary mb-2"
-                >
-                  +
-                </button>
-                <button
-                  id="subtract-tag-expenses"
-                  className="btn btn-secondary mb-2"
-                >
-                  -
-                </button>
+            <div className="">
+              <div></div>
+              <div className="d-flex gap-2">
+                <Button className="square">+</Button>
+                <Button className="square">-</Button>
               </div>
             </div>
-          </div>
+          </Row>
         </CardBody>
         <CardFooter>
-          <Button> Save Tags</Button>
+          <Button>Save Tags</Button>
         </CardFooter>
       </Card>
     </>

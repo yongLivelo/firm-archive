@@ -1,5 +1,5 @@
 function NoPage() {
-  return <>Wassup Nigga</>;
+  return <>Walang page</>;
 }
 
 export default NoPage;

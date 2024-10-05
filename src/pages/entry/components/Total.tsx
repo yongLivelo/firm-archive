@@ -1,7 +1,12 @@
-import { CardBody, CardText, CardTitle, Container } from "react-bootstrap";
-import Card from "react-bootstrap/Card";
-import { TableContext } from "../../../App";
+import {
+  Card,
+  CardBody,
+  CardText,
+  CardTitle,
+  Container,
+} from "react-bootstrap";
 import { useState, useContext } from "react";
+import { TableContext } from "../../../App";
 import { Row } from "../../../interface";
 
 function Total() {

@@ -1,10 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { Button, CardBody } from "react-bootstrap";
-import Card from "react-bootstrap/Card";
-
+import { Card, CardBody } from "react-bootstrap";
 import { TableContext } from "../../../App";
 import { Tags } from "../../../interface";
-
 import jszip from "jszip";
 import pdfmake from "pdfmake";
 import DataTable, { DataTableSlot, DataTableRef } from "datatables.net-react";
@@ -33,10 +30,13 @@ function TableData() {
     { data: "amount" },
     { data: "description" },
   ];
-
   useEffect(() => {
     table?.setData(tableRef.current?.dt());
-  }, []);
+    if (localStorage.getItem("save")) return;
+    table?.data?.rows
+      .add(JSON.parse(localStorage.getItem("save") as string))
+      .draw();
+  }, [table?.data]);
 
   return (
     <>
