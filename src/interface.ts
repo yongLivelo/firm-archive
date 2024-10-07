@@ -3,7 +3,7 @@ export interface Row {
   date: string;
   flow: string;
   mode: string;
-  tags: Tags[];
+  tags: Tags[] | null;
   amount: number;
   description: string;
 }

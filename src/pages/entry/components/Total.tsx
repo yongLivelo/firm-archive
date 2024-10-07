@@ -28,11 +28,16 @@ function Total() {
       ?.data()
       .toArray()
       .forEach((el: Row) => {
-        newTotal.amount += el.flow === "Sales" ? el.amount : -el.amount;
-        newTotal.expenses += el.flow === "Expenses" ? el.amount : 0;
-        newTotal.sales += el.flow === "Sales" ? el.amount : 0;
+        switch (el.flow) {
+          case "sales":
+            newTotal.sales += el.amount;
+            break;
+          case "expenses":
+            newTotal.expenses += el.amount;
+            break;
+        }
       });
-
+    newTotal.amount = newTotal.sales - newTotal.expenses;
     setTotal(newTotal);
   });
 

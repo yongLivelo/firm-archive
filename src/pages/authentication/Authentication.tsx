@@ -24,7 +24,7 @@ function Authentication() {
   const checkInput = (keyPress: any) => {
     if (keyPress.key !== "Enter" && keyPress.type !== "click") return;
     if (username === "julio" && password === "admin") {
-      window.location.href = "/entry";
+      window.location.replace("/entry");
     } else {
       alert("Wrong Password/ Username");
     }

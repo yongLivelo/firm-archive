@@ -3,13 +3,18 @@
   height: 40px;
 }
 
-@import "datatables.net-bs5";
-@import "datatables.net-dt";
+.tag-table {
+  color: black;
+}
+
+@import "node_modules/bootstrap/scss/bootstrap";
 @import "datatables.net-autofill-bs5";
-@import "datatables.net-responsive-bs5";
+@import "datatables.net-bs5";
 @import "datatables.net-buttons-bs5";
-@import "datatables.net-select-bs5";
+@import "datatables.net-responsive-bs5";
 @import "datatables.net-rowgroup-bs5";
 @import "datatables.net-searchpanes-bs5";
 @import "datatables.net-select-bs5";
-@import "node_modules/bootstrap/scss/bootstrap";
+
+/* Add more styles for other toast types if needed */
+@import "react-toastify/dist/ReactToastify.css";

@@ -2,22 +2,23 @@ import CreateTags from "./components/CreateTags";
 import Input from "./components/Input";
 import TableData from "./components/TableData";
 import Total from "./components/Total";
-
-import Nav from "../nav/Nav";
+import { ToastContainer } from "react-toastify";
+import Nav from "../nav/Navigation";
 import { Container, Row, Col } from "react-bootstrap";
-
+import { useState } from "react";
 function Entry() {
+  const [savedTags, setSavedTags] = useState();
+
   return (
     <>
       <Nav></Nav>
-
-      <Container fluid className="bg-light p-4">
+      <Container fluid className="vh-100  bg-light p-4">
         <Row className="mb-lg-4">
-          <Col lg={8} className="mb-4 mb-lg-0 order-2 order-lg-1">
-            <Input />
+          <Col lg={7} className="mb-4 mb-lg-0 order-2 order-lg-1">
+            <Input savedTags={savedTags} />
           </Col>
-          <Col lg={4} className="mb-4 mb-lg-0 order-1 order-lg-2">
-            <CreateTags />
+          <Col lg={5} className="mb-4 mb-lg-0 order-1 order-lg-2">
+            <CreateTags setSavedTags={setSavedTags} />
           </Col>
         </Row>
         <Row className="mb-lg-4">
@@ -29,6 +30,8 @@ function Entry() {
           </Col>
         </Row>
       </Container>
+      <ToastContainer position="top-center" />
+      <ToastContainer position="top-left" />
     </>
   );
 }

@@ -4,7 +4,7 @@ import Statistics from "./pages/statistics/Statistics";
 import Archive from "./pages/archive/Archive";
 import Authentication from "./pages/authentication/Authentication";
 import NoPage from "./pages/NoPage";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import { Api } from "datatables.net-bs5";
 
 interface TableContextType {

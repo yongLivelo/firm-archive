@@ -1,9 +1,10 @@
-import Nav from "../nav/Nav";
+import Nav from "../nav/Navigation";
 
 function Archive() {
   return (
     <>
       <Nav />
+      Archive to be added soon
     </>
   );
 }

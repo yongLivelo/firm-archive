@@ -1,9 +1,9 @@
-import Nav from "../nav/Nav";
+import Nav from "../nav/Navigation";
 function Statistics() {
   return (
     <>
       <Nav />
-      Pogi ako
+      Statistics to be added soon
     </>
   );
 }
