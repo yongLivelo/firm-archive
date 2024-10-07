@@ -28,7 +28,7 @@ function CreateTags({ ...Props }: Props) {
     if (!form.checkValidity() === false) {
       event.stopPropagation();
       event.preventDefault();
-      toast("Saved Tags", { position: "top-right" });
+      toast("Saved Tags", { autoClose: 1000 });
       localStorage.setItem(
         "tags",
         JSON.stringify({ sales: salesTags, expenses: expenseTags })

@@ -30,8 +30,7 @@ function Entry() {
           </Col>
         </Row>
       </Container>
-      <ToastContainer position="top-center" />
-      <ToastContainer position="top-left" />
+      <ToastContainer hideProgressBar position="top-center" />
     </>
   );
 }

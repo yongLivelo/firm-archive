@@ -6,7 +6,7 @@ import { useContext } from "react";
 function Save() {
   const table = useContext(TableContext);
   const notify = () => {
-    toast("Saved Table", { position: "top-center" });
+    toast("Saved Table", { autoClose: 1000 });
     localStorage.setItem("save", JSON.stringify(table?.data?.data().toArray()));
   };
   return (
