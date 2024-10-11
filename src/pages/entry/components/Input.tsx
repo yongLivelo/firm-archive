@@ -15,6 +15,7 @@ import {
 import { TableContext } from "../../../App";
 import { Row, Tags } from "../../../interface";
 import Save from "./inputButtonComponents/Save";
+import Post from "./inputButtonComponents/Post";
 
 interface Props {
   savedTags: any;
@@ -116,8 +117,6 @@ function Input({ ...Props }: Props) {
   const getCSV = () => {
     table?.data?.button(".buttons-csv").trigger();
   };
-
-  const postTable = () => {};
 
   const [validated, setValidated] = useState(false);
   const handleSubmit = (event: any) => {
@@ -247,9 +246,11 @@ function Input({ ...Props }: Props) {
               <Save />
             </div>
             <div className="d-flex gap-2">
-              <Button variant={"warning"} onClick={postTable}>
+              {/* <Button variant={"warning"} onClick={postTable}>
                 Post
-              </Button>
+              </Button> */}
+
+              <Post />
               <Button onClick={getCSV}>CSV</Button>
             </div>
           </div>
