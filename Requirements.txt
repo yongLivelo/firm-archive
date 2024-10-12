@@ -1,0 +1,28 @@
+JSON Load with Hardcoded Data (For Testing)
+
+**Entry Page
+Table filtered by:
+- Tags
+- Time Interval
+Edit Functionality
+- Works on multi-select
+- Uses modal for input form
+Add Smooth Transitions
+Fix Code Generation (YYYY-MM-DD-NNNN)
+
+**Create Barebone Statistics Page
+- Bar Graph (With Controls)
+- Pie Graph (With Controls)
+Graphs Filtered by:
+- Tags
+- Time Interval
+
+**Create Barebone Archive Page
+- Display Large Presentable Table
+- Add Posting Functionality
+
+Create Back-end Account System with mySQL and Laravel
+Improve Overall UI Design
+
+
+
