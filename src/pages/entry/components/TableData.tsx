@@ -23,13 +23,45 @@ function TableData() {
 
   const columns = [
     { data: "code" },
-    { data: "date" },
+    { data: "date", render: DT.render.datetime() as DataTableSlot },
     { data: "flow" },
     { data: "mode" },
-    { data: "tags" },
-    { data: "amount" },
+    {
+      data: "tags",
+      render: (data: Tags[] | null, type: string) => {
+        if (type === "display") {
+          if (!data?.length) {
+            return `<p class="tag px-1 rounded bg-warning tag-table p-2">No Tags</p>`;
+          }
+          return data
+            .map(
+              (el) =>
+                `<div class="tag p-2 tag-item bg-primary mb-2 rounded text-light d-inline">
+                  <h5 class="d-inline">${el.category}:</h5>
+                  <p class="d-inline">${el.selected || "None"}</p>
+                </div>`
+            )
+            .join("");
+        }
+        return (
+          data?.map((el) => `${el.category}: ${el.selected}`).join(", ") ||
+          "No Tags"
+        );
+      },
+    },
+    {
+      data: "amount",
+      render: (data: number | null, type: string) => {
+        if (type === "display") {
+          return `₱${data}`;
+        } else {
+          return data;
+        }
+      },
+    },
     { data: "description" },
   ];
+
   useEffect(() => {
     table?.setData(tableRef.current?.dt());
 
@@ -48,53 +80,30 @@ function TableData() {
     <>
       <Card className="shadow">
         <CardBody>
-          <DataTable
-            className="display table"
-            options={{
-              responsive: true,
-              select: true,
-              buttons: ["csv"],
-            }}
-            ref={tableRef}
-            columns={columns}
-            slots={{
-              1: DT.render.datetime() as DataTableSlot,
-              4: (data: Tags[] | null) => {
-                if (!data?.length)
-                  return (
-                    <p className="px-1 rounded bg-warning tag-table p-2">
-                      No Tags
-                    </p>
-                  );
-
-                return (
-                  <>
-                    {data.map((el, index) => (
-                      <div
-                        key={index}
-                        className="p-2 tag-item bg-primary mb-2 rounded  text-light"
-                      >
-                        <h5 className="d-inline">{el.category}: </h5>
-                        <p className="d-inline">{el.selected || "None"}</p>
-                      </div>
-                    ))}
-                  </>
-                );
-              },
-            }}
-          >
-            <thead>
-              <tr>
-                <th scope="col">Code</th>
-                <th scope="col">Date</th>
-                <th scope="col">Flow</th>
-                <th scope="col">Mode</th>
-                <th scope="col">Tags</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Description</th>
-              </tr>
-            </thead>
-          </DataTable>
+          <div className="table-responsive" style={{ overflowX: "hidden" }}>
+            <DataTable
+              className="display table"
+              options={{
+                responsive: true,
+                select: true,
+                buttons: ["csv"],
+              }}
+              ref={tableRef}
+              columns={columns}
+            >
+              <thead>
+                <tr>
+                  <th scope="col">Code</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Flow</th>
+                  <th scope="col">Mode</th>
+                  <th scope="col">Tags</th>
+                  <th scope="col">Amount</th>
+                  <th scope="col">Description</th>
+                </tr>
+              </thead>
+            </DataTable>
+          </div>
         </CardBody>
       </Card>
     </>

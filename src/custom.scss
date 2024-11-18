@@ -4,9 +4,21 @@
 }
 
 .tag-table {
-  color: black;
+  text-align: center;
+  font-size: 12px;
 }
 
+td.child ul {
+  width: 100%;
+}
+
+.tag {
+  width: fit-content;
+}
+
+.selected > td > .tag {
+  color: black;
+}
 @import "node_modules/bootstrap/scss/bootstrap";
 @import "datatables.net-autofill-bs5";
 @import "datatables.net-bs5";

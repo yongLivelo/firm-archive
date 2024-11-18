@@ -16,7 +16,7 @@ interface Props {
   setSavedTags: (arg: any) => void;
 }
 
-function CreateTags({ ...Props }: Props) {
+export default function CreateTags({ ...Props }: Props) {
   const [expenseTags, setExpenseTags] = useState<any[]>([]);
   const [salesTags, setSalesTags] = useState<any[]>([]);
 
@@ -82,5 +82,3 @@ function CreateTags({ ...Props }: Props) {
     </>
   );
 }
-
-export default CreateTags;

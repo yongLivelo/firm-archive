@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import {
   CardBody,
   CardFooter,
@@ -10,8 +10,8 @@ import {
   Form,
   Card,
   Button,
+  Modal,
 } from "react-bootstrap";
-
 import { TableContext } from "../../../App";
 import { Row, Tags } from "../../../interface";
 import Save from "./inputButtonComponents/Save";
@@ -22,47 +22,53 @@ interface Props {
 }
 
 function Input({ ...Props }: Props) {
+  const createCode = () => {
+    // MockDate.set("2024-11-19T00:00:00Z");
+    const today = new Date();
+
+    const formattedDate = today.toISOString().split("T")[0].replace(/-/g, "");
+    console.log(formattedDate);
+    let transactionCounters = JSON.parse(
+      localStorage.getItem("transactionCounters") || "{}"
+    );
+
+    const lastGeneratedDate = transactionCounters["lastGeneratedDate"];
+    if (lastGeneratedDate !== formattedDate) {
+      transactionCounters["lastGeneratedDate"] = formattedDate;
+      transactionCounters[formattedDate] = 1;
+    }
+
+    const counter = transactionCounters[formattedDate]++;
+
+    localStorage.setItem(
+      "transactionCounters",
+      JSON.stringify(transactionCounters)
+    );
+
+    return `${formattedDate}-${String(counter).padStart(4, "0")}`;
+  };
+
   const table = useContext(TableContext);
 
-  const createCode = () => {
-    const dateProcess = new Date(date);
-    return `${dateProcess.getFullYear()}-${dateProcess.getMonth()}-${dateProcess.getDay()}`;
-  };
-  const [date, setDate] = useState("");
-  const checkDate = (e: any) => {
-    setDate(e.target.value);
-  };
+  const [date, setDate] = useState(new Date());
+  const checkDate = (e: any) => setDate(new Date(e.target.value));
+
   const [flow, setFlow] = useState<string>("sales");
   const flowRadio = [
     { name: "Sales", value: "sales" },
     { name: "Expenses", value: "expenses" },
   ];
 
-  const checkFlow = (e: any) => {
-    setFlow(e.currentTarget.value);
-  };
+  const checkFlow = (e: any) => setFlow(e.currentTarget.value);
+
   const [mode, setMode] = useState<string>("0");
   const modeOptions = [
-    {
-      text: "Select mode of payment",
-      value: "",
-    },
-    {
-      text: "Gcash",
-      value: "Gcash",
-    },
-    {
-      text: "BPI",
-      value: "BPI",
-    },
-    {
-      text: "Cash",
-      value: "Cash",
-    },
+    { text: "Select mode of payment", value: "" },
+    { text: "Gcash", value: "Gcash" },
+    { text: "BPI", value: "BPI" },
+    { text: "Cash", value: "Cash" },
   ];
-  const checkMode = (e: any) => {
-    setMode(e.target.value);
-  };
+  const checkMode = (e: any) => setMode(e.target.value);
 
   const [tagOptions, setTagOptions] = useState<any>([]);
   useEffect(() => {
@@ -100,29 +106,15 @@ function Input({ ...Props }: Props) {
   }, [tagOptions]);
 
   const [amount, setAmount] = useState<number>(0);
-  const checkAmount = (e: any) => {
-    setAmount(parseInt(e.target.value));
-  };
+  const checkAmount = (e: any) => setAmount(parseInt(e.target.value));
+
   const [description, setDescription] = useState<string>("");
-  const checkDescription = (e: any) => {
-    setDescription(e.target.value);
-  };
-
-  const deleteRows = () => {
-    table?.data?.rows(".selected").remove().draw();
-  };
-
-  const editRows = () => {};
-
-  const getCSV = () => {
-    table?.data?.button(".buttons-csv").trigger();
-  };
+  const checkDescription = (e: any) => setDescription(e.target.value);
 
   const [validated, setValidated] = useState(false);
   const handleSubmit = (event: any) => {
     event.preventDefault();
     const form = event.currentTarget;
-
     if (!form.checkValidity() === false) {
       event.stopPropagation();
       event.preventDefault();
@@ -142,6 +134,50 @@ function Input({ ...Props }: Props) {
       setValidated(true);
     }
   };
+
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [editRowData, setEditRowData] = useState<any>(null);
+
+  const handleEditModalClose = () => setShowModal(false);
+  const handleEditModalShow = (rowData: any) => {
+    setEditRowData(rowData);
+    setShowModal(true);
+  };
+
+  const handleModalSubmit = () => {
+    // Update row in table
+    if (editRowData) {
+      table?.data?.row(editRowData.rowIndex).data(editRowData).draw();
+    }
+    setShowModal(false);
+  };
+
+  const handleModalChange = (
+    e: React.ChangeEvent<HTMLInputElement> | any,
+    field: string
+  ) => {
+    setEditRowData((prevData: any) => ({
+      ...prevData,
+      [field]: e.target.value,
+    }));
+  };
+
+  const handleRowSelect = () => {
+    const selectedRow = table?.data?.rows({ selected: true }).data()[0]; // Get selected row data
+    if (selectedRow) {
+      handleEditModalShow(selectedRow);
+    }
+  };
+
+  const deleteRows = () => {
+    table?.data?.rows(".selected").remove().draw();
+  };
+
+  const getCSV = () => {
+    table?.data?.button(".buttons-csv").trigger();
+  };
+
   return (
     <>
       <Card className="shadow">
@@ -152,6 +188,7 @@ function Input({ ...Props }: Props) {
             validated={validated}
             onSubmit={handleSubmit}
           >
+            {/* Main Form */}
             <FormGroup className="mb-2">
               <FormControl
                 required
@@ -185,6 +222,8 @@ function Input({ ...Props }: Props) {
                 ))}
               </FormSelect>
             </FormGroup>
+
+            {/* Additional Form Fields */}
             <FormGroup className="d-flex gap-2 mb-2 p-2 bg-light rounded">
               {!tagOptions?.length
                 ? "No Tags"
@@ -222,7 +261,6 @@ function Input({ ...Props }: Props) {
                 step="any"
                 placeholder="Enter Amount"
               />
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </FormGroup>
             <FormGroup className="mb-2">
               <FormControl
@@ -242,20 +280,72 @@ function Input({ ...Props }: Props) {
                 Add
               </Button>
               <Button onClick={deleteRows}>Delete</Button>
-              <Button onClick={editRows}>Edit</Button>
+              <Button onClick={handleRowSelect}>Edit</Button>
               <Save />
             </div>
             <div className="d-flex gap-2">
-              {/* <Button variant={"warning"} onClick={postTable}>
-                Post
-              </Button> */}
-
               <Post />
               <Button onClick={getCSV}>CSV</Button>
             </div>
           </div>
         </CardFooter>
       </Card>
+
+      {/* Edit Modal */}
+      <Modal show={showModal} onHide={handleEditModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Transaction</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <FormGroup className="mb-2">
+              <FormControl
+                value={editRowData?.date || ""}
+                required
+                onChange={(e) => handleModalChange(e, "date")}
+                type="datetime-local"
+              />
+            </FormGroup>
+            <FormGroup className="mb-2">
+              <FormSelect
+                value={editRowData?.mode || ""}
+                required
+                onChange={(e) => handleModalChange(e, "mode")}
+              >
+                {modeOptions.map((opt, id) => (
+                  <option key={id} value={opt.value}>
+                    {opt.text}
+                  </option>
+                ))}
+              </FormSelect>
+            </FormGroup>
+            <FormGroup className="mb-2">
+              <FormControl
+                value={editRowData?.amount || 0}
+                onChange={(e) => handleModalChange(e, "amount")}
+                type="number"
+              />
+            </FormGroup>
+            <FormGroup className="mb-2">
+              <FormControl
+                value={editRowData?.description || ""}
+                onChange={(e) => handleModalChange(e, "description")}
+                as="textarea"
+                rows={3}
+                placeholder="Enter Description"
+              />
+            </FormGroup>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleEditModalClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleModalSubmit}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

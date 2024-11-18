@@ -1,6 +1,6 @@
 export interface Row {
   code: string;
-  date: string;
+  date: Date;
   flow: string;
   mode: string;
   tags: Tags[] | null;
