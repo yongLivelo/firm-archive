@@ -52,7 +52,7 @@ function Archive() {
     <>
       <Nav />
       <Container className="vh-100 bg-light p-4">
-        <div className="table-responsive">
+        <div className="table-responsive" style={{ overflowX: "hidden" }}>
           <DataTable
             className="display table"
             options={{

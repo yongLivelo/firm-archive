@@ -16,6 +16,7 @@ import { TableContext } from "../../../App";
 import { Row, Tags } from "../../../interface";
 import Save from "./inputButtonComponents/Save";
 import Post from "./inputButtonComponents/Post";
+import Edit from "./inputButtonComponents/Edit";
 
 interface Props {
   savedTags: any;
@@ -135,41 +136,6 @@ function Input({ ...Props }: Props) {
     }
   };
 
-  // Modal state
-  const [showModal, setShowModal] = useState(false);
-  const [editRowData, setEditRowData] = useState<any>(null);
-
-  const handleEditModalClose = () => setShowModal(false);
-  const handleEditModalShow = (rowData: any) => {
-    setEditRowData(rowData);
-    setShowModal(true);
-  };
-
-  const handleModalSubmit = () => {
-    // Update row in table
-    if (editRowData) {
-      table?.data?.row(editRowData.rowIndex).data(editRowData).draw();
-    }
-    setShowModal(false);
-  };
-
-  const handleModalChange = (
-    e: React.ChangeEvent<HTMLInputElement> | any,
-    field: string
-  ) => {
-    setEditRowData((prevData: any) => ({
-      ...prevData,
-      [field]: e.target.value,
-    }));
-  };
-
-  const handleRowSelect = () => {
-    const selectedRow = table?.data?.rows({ selected: true }).data()[0]; // Get selected row data
-    if (selectedRow) {
-      handleEditModalShow(selectedRow);
-    }
-  };
-
   const deleteRows = () => {
     table?.data?.rows(".selected").remove().draw();
   };
@@ -280,7 +246,7 @@ function Input({ ...Props }: Props) {
                 Add
               </Button>
               <Button onClick={deleteRows}>Delete</Button>
-              <Button onClick={handleRowSelect}>Edit</Button>
+              <Edit />
               <Save />
             </div>
             <div className="d-flex gap-2">
@@ -290,62 +256,6 @@ function Input({ ...Props }: Props) {
           </div>
         </CardFooter>
       </Card>
-
-      {/* Edit Modal */}
-      <Modal show={showModal} onHide={handleEditModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Transaction</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <FormGroup className="mb-2">
-              <FormControl
-                value={editRowData?.date || ""}
-                required
-                onChange={(e) => handleModalChange(e, "date")}
-                type="datetime-local"
-              />
-            </FormGroup>
-            <FormGroup className="mb-2">
-              <FormSelect
-                value={editRowData?.mode || ""}
-                required
-                onChange={(e) => handleModalChange(e, "mode")}
-              >
-                {modeOptions.map((opt, id) => (
-                  <option key={id} value={opt.value}>
-                    {opt.text}
-                  </option>
-                ))}
-              </FormSelect>
-            </FormGroup>
-            <FormGroup className="mb-2">
-              <FormControl
-                value={editRowData?.amount || 0}
-                onChange={(e) => handleModalChange(e, "amount")}
-                type="number"
-              />
-            </FormGroup>
-            <FormGroup className="mb-2">
-              <FormControl
-                value={editRowData?.description || ""}
-                onChange={(e) => handleModalChange(e, "description")}
-                as="textarea"
-                rows={3}
-                placeholder="Enter Description"
-              />
-            </FormGroup>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleEditModalClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleModalSubmit}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </>
   );
 }
