@@ -13,7 +13,7 @@ ChartJS.register();
 
 function IncomeAndExpense() {
   // Create a reference for the chart instance
-  const chartRef = useRef<ChartJS | null>(null);
+  const chartRef = useRef<ChartJS | null | any>(null);
 
   // Function to download the chart as a PNG image
   const download = () => {

@@ -17,6 +17,9 @@ import { Row, Tags } from "../../../interface";
 import Save from "./inputButtonComponents/Save";
 import Post from "./inputButtonComponents/Post";
 import Edit from "./inputButtonComponents/Edit";
+import Csv from "./inputButtonComponents/Csv";
+import Delete from "./inputButtonComponents/Delete";
+import Add from "./inputButtonComponents/Add";
 
 interface Props {
   savedTags: any;
@@ -136,14 +139,6 @@ function Input({ ...Props }: Props) {
     }
   };
 
-  const deleteRows = () => {
-    table?.data?.rows(".selected").remove().draw();
-  };
-
-  const getCSV = () => {
-    table?.data?.button(".buttons-csv").trigger();
-  };
-
   return (
     <>
       <Card className="shadow">
@@ -154,7 +149,6 @@ function Input({ ...Props }: Props) {
             validated={validated}
             onSubmit={handleSubmit}
           >
-            {/* Main Form */}
             <FormGroup className="mb-2">
               <FormControl
                 required
@@ -242,16 +236,14 @@ function Input({ ...Props }: Props) {
         <CardFooter>
           <div className="d-flex flex-wrap justify-content-between">
             <div className="d-flex gap-2 mb-2 mb-lg-0">
-              <Button form="main-form" type="submit">
-                Add
-              </Button>
-              <Button onClick={deleteRows}>Delete</Button>
+              <Add />
+              <Delete />
               <Edit />
               <Save />
             </div>
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-2  mb-2 mb-lg-0">
               <Post />
-              <Button onClick={getCSV}>CSV</Button>
+              <Csv />
             </div>
           </div>
         </CardFooter>

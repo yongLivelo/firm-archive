@@ -4,16 +4,18 @@ import {
   CardBody,
   Button,
   CardFooter,
+  ButtonGroup,
+  ToggleButton,
 } from "react-bootstrap";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 ChartJS.register();
 
 function CashFlow() {
   // Define chartRef with correct type for Chart.js instance
-  const chartRef = useRef<ChartJS | null>(null);
+  const chartRef = useRef<ChartJS | null | any>(null);
 
   // Function to download chart as PNG
   const download = () => {
@@ -53,6 +55,13 @@ function CashFlow() {
     },
   };
 
+  const timeIntervalOptions = ["m", "h", "d", "mo", "y"];
+
+  const [timeInterval, setTimeInterval] = useState<string>("m");
+
+  useEffect(() => {
+    console.log(timeInterval);
+  }, [timeInterval]);
   return (
     <Card>
       <CardHeader>Cash Flow</CardHeader>
@@ -62,7 +71,29 @@ function CashFlow() {
         </div>
       </CardBody>
       <CardFooter>
-        <Button onClick={download}>Download</Button>
+        <div className="d-flex flex-wrap justify-content-between">
+          <div>
+            <Button onClick={download}>Download</Button>
+          </div>
+          <div>
+            <ButtonGroup>
+              {timeIntervalOptions.map((radio, id) => (
+                <ToggleButton
+                  key={id}
+                  id={`timeInterval-${id}`}
+                  type="radio"
+                  value={`${radio}`}
+                  checked={radio === timeInterval}
+                  onChange={(e: any) => {
+                    setTimeInterval(`${e.currentTarget.value}`);
+                  }}
+                >
+                  1{radio}
+                </ToggleButton>
+              ))}
+            </ButtonGroup>
+          </div>
+        </div>
       </CardFooter>
     </Card>
   );

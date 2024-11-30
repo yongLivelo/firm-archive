@@ -12,7 +12,7 @@ import { useRef } from "react";
 ChartJS.register();
 
 function CashDistribution() {
-  const chartRef = useRef<ChartJS | null>(null);
+  const chartRef = useRef<ChartJS | null | any>(null);
 
   const download = () => {
     if (chartRef.current) {
