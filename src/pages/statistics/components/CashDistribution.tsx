@@ -9,13 +9,26 @@ import {
 } from "react-bootstrap";
 import { Pie } from "react-chartjs-2";
 import { ChartData, Chart as ChartJS } from "chart.js/auto";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
+import { PostContext } from "../Statistics";
+import { Flow } from "@/interface/Flow";
 
 ChartJS.register();
 
 export default function CashDistribution() {
   const chartRef = useRef<ChartJS | any>(null);
+  const datas = useContext(PostContext);
+  const counter = [0, 0];
+  const processData = datas?.map((row, i) => {
+    if (row.flow === Flow.Expense) {
+      counter[1]++;
+    }
 
+    if (row.flow === Flow.Sale) {
+      counter[0]++;
+    }
+  });
+  console.log(counter);
   const download = () => {
     if (chartRef.current) {
       const url = chartRef.current.toBase64Image();
@@ -30,7 +43,7 @@ export default function CashDistribution() {
     labels: ["Revenue", "Loss"],
     datasets: [
       {
-        data: [900, 90],
+        data: [...counter],
         backgroundColor: ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)"],
         borderColor: ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
         borderWidth: 1,

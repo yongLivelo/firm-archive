@@ -3,16 +3,23 @@ import NavBar from "@/components/NavBar";
 import CashFlow from "./components/CashFlow";
 import IncomeAndExpense from "./components/IncomeAndExpense";
 import CashDistribution from "./components/CashDistribution";
-import { TableContext } from "../Entry/Entry";
-import { useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { Api } from "datatables.net-bs5";
+
+export const PostContext = createContext<Array<any> | null>(null);
 function Statistics() {
-  const [post, setPost] = useState<Api | null | undefined>(null);
+  const [post, setPost] = useState<Array<any> | null>(null);
+  useEffect(() => {
+    try {
+      setPost(JSON.parse(localStorage.getItem("postTable") as string));
+    } catch {}
+  }, []);
+
   return (
     <>
       <NavBar />
 
-      <TableContext.Provider value={{ data: post, setData: setPost }}>
+      <PostContext.Provider value={post}>
         <Container fluid className="p-4">
           <Row className="mb-lg-4">
             <Col className="mb-4 mb-lg-0">
@@ -28,7 +35,7 @@ function Statistics() {
             </Col>
           </Row>
         </Container>
-      </TableContext.Provider>
+      </PostContext.Provider>
     </>
   );
 }

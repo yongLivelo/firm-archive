@@ -7,22 +7,24 @@ import {
 } from "react-bootstrap";
 import { Bar } from "react-chartjs-2";
 import { ChartData, Chart as ChartJS } from "chart.js/auto";
-import { useRef } from "react";
+import { useContext, useRef } from "react";
+import { PostContext } from "../Statistics";
 
 ChartJS.register();
 
 function IncomeAndExpense() {
+  const datas = useContext(PostContext);
+  console.log(datas);
   // Create a reference for the chart instance
   const chartRef = useRef<ChartJS | null | any>(null);
 
-  // Function to download the chart as a PNG image
   const download = () => {
     if (chartRef.current) {
-      const url = chartRef.current.toBase64Image(); // Get the chart image as base64
+      const url = chartRef.current.toBase64Image();
       const a = document.createElement("a");
       a.href = url;
-      a.download = "income_and_expense_chart.png"; // Set the name of the downloaded file
-      a.click(); // Trigger the download
+      a.download = "income_and_expense_chart.png";
+      a.click();
     }
   };
 

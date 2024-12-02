@@ -12,7 +12,6 @@ function Archive() {
   const tableRef: TableContextType = { data: post, setData: setPost };
 
   useEffect(() => {
-    console.log(tableRef);
     if (localStorage.getItem("postTable")) {
       try {
         const postTableData = JSON.parse(

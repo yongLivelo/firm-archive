@@ -1,27 +1,43 @@
-import { useContext } from "react";
 import {
   Form,
   FormControl,
   FormGroup,
   FormLabel,
   Button,
+  Alert,
 } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase/firebase";
+import { Navigate } from "react-router-dom";
+import { useState } from "react";
 
-function Login() {
-  const navigate = useNavigate();
+type LoginProps = {
+  user: any | null;
+};
 
-  const checkInput = (e: any) => {
+function Login({ user }: LoginProps) {
+  const checkInput = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const username = e.currentTarget.username.value;
-    const password = e.currentTarget.password.value;
+    const email = (e.currentTarget.email as HTMLInputElement).value;
+    const password = (e.currentTarget.password as HTMLInputElement).value;
 
-    if (username === "julio" && password === "admin") {
-      navigate("/entry");
-    } else {
-      alert("Wrong Password/Username");
+    if (!email || !password) return;
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log(userCredential.user);
+    } catch (err: any) {
+      alert("Wrong Password/ Email");
     }
   };
+
+  if (user) {
+    return <Navigate to="/entry" />;
+  }
 
   return (
     <div className="vh-100 d-flex align-items-center justify-content-center">
@@ -30,14 +46,26 @@ function Login() {
         className="border p-5 rounded shadow bg-light"
       >
         <FormGroup className="mb-4">
-          <FormControl name="username" type="text" />
-          <FormLabel>Username</FormLabel>
+          <FormLabel>Email</FormLabel>
+          <FormControl
+            name="email"
+            type="text"
+            placeholder="Enter your email"
+            required
+          />
         </FormGroup>
         <FormGroup className="mb-4">
-          <FormControl name="password" type="password" />
           <FormLabel>Password</FormLabel>
+          <FormControl
+            name="password"
+            type="password"
+            placeholder="Enter your password"
+            required
+          />
         </FormGroup>
-        <Button type="submit">Login</Button>
+        <Button type="submit" variant="primary">
+          Login
+        </Button>
       </Form>
     </div>
   );

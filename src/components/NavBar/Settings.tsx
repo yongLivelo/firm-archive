@@ -10,6 +10,8 @@ import {
   ModalHeader,
   ModalTitle,
 } from "react-bootstrap";
+import { signOut } from "firebase/auth";
+import { auth } from "@/firebase/firebase";
 
 function Settings() {
   const [show, setShow] = useState(false);
@@ -17,7 +19,9 @@ function Settings() {
   const handleShow = () => setShow(true);
 
   const handleLogout = () => {
-    window.location.href = "./login";
+    signOut(auth)
+      .then(() => console.log("Sign Out"))
+      .catch((error) => console.log("Error"));
   };
 
   return (
