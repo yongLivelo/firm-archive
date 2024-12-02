@@ -1,16 +1,18 @@
+import { Row } from "@/interface/Row";
+import { Flow } from "@/interface/Flow";
+import { useContext, useState } from "react";
 import {
   Card,
   CardBody,
-  CardText,
-  CardTitle,
   Container,
+  CardTitle,
+  CardText,
 } from "react-bootstrap";
-import { useState, useContext } from "react";
-import { TableContext } from "../../../App";
-import { Row } from "../../../interface";
+import { TableContext } from "../Entry";
+import { TableContextType } from "@/interface/TableContextType";
 
 function Total() {
-  const table = useContext(TableContext);
+  const table = useContext(TableContext) as TableContextType;
   let [total, setTotal] = useState({
     amount: 0,
     expenses: 0,
@@ -29,10 +31,10 @@ function Total() {
       .toArray()
       .forEach((el: Row) => {
         switch (el.flow) {
-          case "sales":
+          case Flow.Sale:
             newTotal.sales += el.amount;
             break;
-          case "expenses":
+          case Flow.Expense:
             newTotal.expenses += el.amount;
             break;
         }

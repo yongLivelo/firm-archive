@@ -1,36 +1,34 @@
-import CreateTags from "./components/CreateTags";
 import Input from "./components/Input";
-import TableData from "./components/TableData";
+import DraftTable from "./components/DraftTable";
 import Total from "./components/Total";
+import NavBar from "@/components/NavBar";
 import { ToastContainer } from "react-toastify";
-import Nav from "../nav/Navigation";
 import { Container, Row, Col } from "react-bootstrap";
-import { useState } from "react";
-function Entry() {
-  const [savedTags, setSavedTags] = useState();
+import { createContext, useState } from "react";
+import { Api } from "datatables.net-bs5";
+import { TableContextType } from "@/interface/TableContextType";
 
+export const TableContext = createContext<TableContextType | null>(null);
+
+function Entry() {
+  const [draft, setDraft] = useState<Api | null | undefined>(null);
   return (
     <>
-      <Nav></Nav>
-      <Container fluid className="vh-100  bg-light p-4">
-        <Row className="mb-lg-4">
-          <Col lg={7} className="mb-4 mb-lg-0 order-2 order-lg-1">
-            <Input savedTags={savedTags} />
-          </Col>
-          <Col lg={5} className="mb-4 mb-lg-0 order-1 order-lg-2">
-            <CreateTags setSavedTags={setSavedTags} />
-          </Col>
-        </Row>
-        <Row className="mb-lg-4">
-          <Col lg={10} className="mb-4 mb-lg-0">
-            <TableData />
-          </Col>
-          <Col lg={2} className="mb-4 mb-lg-0">
-            <Total />
-          </Col>
-        </Row>
-      </Container>
-      <ToastContainer hideProgressBar position="top-center" />
+      <TableContext.Provider value={{ data: draft, setData: setDraft }}>
+        <NavBar />
+        <Container fluid className="p-4">
+          <Row className="mb-lg-4">
+            <Col lg={4} className="mb-4 mb-lg-0 d-flex flex-column gap-3">
+              <Input />
+              <Total />
+            </Col>
+            <Col lg={8} className="mb-4 mb-lg-0">
+              <DraftTable />
+            </Col>
+          </Row>
+        </Container>
+        <ToastContainer hideProgressBar position="top-center" />
+      </TableContext.Provider>
     </>
   );
 }

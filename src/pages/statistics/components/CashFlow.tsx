@@ -9,15 +9,13 @@ import {
 } from "react-bootstrap";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 ChartJS.register();
 
-function CashFlow() {
-  // Define chartRef with correct type for Chart.js instance
+export default function CashFlow() {
   const chartRef = useRef<ChartJS | null | any>(null);
 
-  // Function to download chart as PNG
   const download = () => {
     if (chartRef.current) {
       const url = chartRef.current.toBase64Image(); // Get chart image as base64
@@ -36,7 +34,7 @@ function CashFlow() {
         data: [400, 300, 500, 700, 600, 800],
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
-        tension: 0.4, // for smooth curves
+        tension: 0.4,
       },
     ],
   };
@@ -55,18 +53,17 @@ function CashFlow() {
     },
   };
 
-  const timeIntervalOptions = ["m", "h", "d", "mo", "y"];
-
-  const [timeInterval, setTimeInterval] = useState<string>("m");
+  const [timeInterval, setTimeInterval] = useState<string>("1s");
 
   useEffect(() => {
     console.log(timeInterval);
   }, [timeInterval]);
+
   return (
     <Card>
       <CardHeader>Cash Flow</CardHeader>
       <CardBody>
-        <div style={{ height: "700px" }}>
+        <div style={{ height: "500px" }}>
           <Line ref={chartRef} data={data} options={options} />
         </div>
       </CardBody>
@@ -76,22 +73,10 @@ function CashFlow() {
             <Button onClick={download}>Download</Button>
           </div>
           <div>
-            <ButtonGroup>
-              {timeIntervalOptions.map((radio, id) => (
-                <ToggleButton
-                  key={id}
-                  id={`timeInterval-${id}`}
-                  type="radio"
-                  value={`${radio}`}
-                  checked={radio === timeInterval}
-                  onChange={(e: any) => {
-                    setTimeInterval(`${e.currentTarget.value}`);
-                  }}
-                >
-                  1{radio}
-                </ToggleButton>
-              ))}
-            </ButtonGroup>
+            <Controls
+              timeInterval={timeInterval}
+              setTimeInterval={setTimeInterval}
+            />
           </div>
         </div>
       </CardFooter>
@@ -99,4 +84,40 @@ function CashFlow() {
   );
 }
 
-export default CashFlow;
+interface ControlsProps {
+  timeInterval: string;
+  setTimeInterval: (interval: string) => void;
+}
+
+function Controls({ timeInterval, setTimeInterval }: ControlsProps) {
+  const timeIntervalOptions = [
+    "1s",
+    "15m",
+    "1h",
+    "4h",
+    "1d",
+    "3d",
+    "1mo",
+    "6mo",
+    "1y",
+  ];
+
+  return (
+    <ButtonGroup>
+      {timeIntervalOptions.map((radio, id) => (
+        <ToggleButton
+          key={id}
+          id={`timeInterval-${id}`}
+          type="radio"
+          value={radio}
+          checked={radio === timeInterval}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setTimeInterval(e.currentTarget.value)
+          }
+        >
+          {radio}
+        </ToggleButton>
+      ))}
+    </ButtonGroup>
+  );
+}

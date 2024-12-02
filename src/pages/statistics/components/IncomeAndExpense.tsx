@@ -63,7 +63,7 @@ function IncomeAndExpense() {
     <Card>
       <CardHeader>Income and Expense</CardHeader>
       <CardBody>
-        <div style={{ height: "600px" }}>
+        <div style={{ height: "400px" }}>
           {/* Bar chart with reference to access chart instance */}
           <Bar ref={chartRef} data={data} options={options} />
         </div>

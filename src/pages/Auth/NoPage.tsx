@@ -1,5 +1,5 @@
 function NoPage() {
-  return <>Walang page</>;
+  return <>No Page</>;
 }
 
 export default NoPage;

@@ -1,8 +1,16 @@
 import Settings from "./Settings";
 import { useLocation } from "react-router-dom";
-import { Navbar, Nav, Container } from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  Container,
+  NavbarBrand,
+  NavbarToggle,
+  NavbarCollapse,
+  NavLink,
+} from "react-bootstrap";
 
-function Navigation() {
+function NavBar() {
   const location = useLocation().pathname;
 
   const activatedLink = (path: string) => {
@@ -13,31 +21,31 @@ function Navigation() {
     <>
       <Navbar expand="lg" className="shadow-sm">
         <Container fluid>
-          <Navbar.Brand href="/entry"> Firm Archive</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse className="justify-content-end">
+          <NavbarBrand href="/entry"> Firm Archive</NavbarBrand>
+          <NavbarToggle aria-controls="basic-navbar-nav" />
+          <NavbarCollapse>
             <Nav className="me-auto">
-              <Nav.Link className={activatedLink("/entry")} href="/entry">
+              <NavLink className={activatedLink("/entry")} href="/entry">
                 Entry
-              </Nav.Link>
-              <Nav.Link
+              </NavLink>
+              <NavLink
                 className={activatedLink("/statistics")}
                 href="/statistics"
               >
                 Statistics
-              </Nav.Link>
-              <Nav.Link className={activatedLink("/archive")} href="/archive">
+              </NavLink>
+              <NavLink className={activatedLink("/archive")} href="/archive">
                 Archive
-              </Nav.Link>
+              </NavLink>
             </Nav>
             <Nav>
               <Settings />
             </Nav>
-          </Navbar.Collapse>
+          </NavbarCollapse>
         </Container>
       </Navbar>
     </>
   );
 }
 
-export default Navigation;
+export default NavBar;

@@ -1,17 +1,25 @@
-import settingsIcon from "../../assets/settings.png";
+import settingsIcon from "@/assets/settings.png";
+import profile from "@/assets/je-bikeshop.jpg";
 import { useState } from "react";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import profile from "../../assets/je_bikeshop.jpg";
+import {
+  Button,
+  Container,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ModalTitle,
+} from "react-bootstrap";
+
 function Settings() {
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const handleLogout = () => {
-    window.location.href = "./authentication";
+    window.location.href = "./login";
   };
+
   return (
     <>
       <img
@@ -25,15 +33,15 @@ function Settings() {
       />
 
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Settings</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="container-fluid text-center">
+        <ModalHeader closeButton>
+          <ModalTitle>Settings</ModalTitle>
+        </ModalHeader>
+        <ModalBody>
+          <Container fluid className="d-flex align-items-center flex-column">
             <img
               id="user-profile"
               alt="avatar"
-              className="rounded-circle"
+              className="rounded-circle mb-2"
               src={profile}
               style={{
                 width: "150px",
@@ -41,19 +49,29 @@ function Settings() {
                 objectFit: "cover",
               }}
             />
-            <h5 id="user-name" className="my-3">
+            <h5 id="user-name" className="mb-2">
               JE Bikeshop
             </h5>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
+          </Container>
+          <br></br>
+          <h5 className="mb-2">Developer Controls</h5>
+          <Button
+            onClick={() => {
+              localStorage.clear();
+              location.reload();
+            }}
+          >
+            Clear
+          </Button>
+        </ModalBody>
+        <ModalFooter>
           <Button variant="primary" onClick={handleLogout}>
             Logout
           </Button>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-        </Modal.Footer>
+        </ModalFooter>
       </Modal>
     </>
   );
