@@ -4,18 +4,19 @@ import {
   CardBody,
   CardFooter,
   Button,
+  ButtonGroup,
+  ToggleButton,
 } from "react-bootstrap";
 import { Bar } from "react-chartjs-2";
-import { ChartData, Chart as ChartJS } from "chart.js/auto";
-import { useContext, useRef } from "react";
+import { Chart as ChartJS, ChartData } from "chart.js/auto";
+import { useContext, useRef, useState } from "react";
 import { PostContext } from "../Statistics";
+import { Flow } from "@/interface/Flow";
 
 ChartJS.register();
 
 function IncomeAndExpense() {
-  const datas = useContext(PostContext);
-  console.log(datas);
-  // Create a reference for the chart instance
+  const datas = useContext(PostContext) || [];
   const chartRef = useRef<ChartJS | null | any>(null);
 
   const download = () => {
@@ -28,19 +29,28 @@ function IncomeAndExpense() {
     }
   };
 
+  // Filter and map data safely
+  const expenseData = datas
+    .filter((row) => row.flow === Flow.Expense)
+    .map((row) => row.amount);
+
+  const salesData = datas
+    .filter((row) => row.flow === Flow.Sale)
+    .map((row) => row.amount);
+
   const data: ChartData<"bar"> = {
     labels: ["A", "B", "C"],
     datasets: [
       {
         label: "Income",
-        data: [200, 300, 400],
+        data: salesData,
         backgroundColor: "rgba(75, 192, 192, 0.6)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
       },
       {
         label: "Expense",
-        data: [20, 30, 40],
+        data: expenseData,
         backgroundColor: "rgba(255, 99, 132, 0.6)",
         borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 1,
@@ -61,21 +71,68 @@ function IncomeAndExpense() {
     },
   };
 
+  const [timeInterval, setTimeInterval] = useState<string>("Daily");
+
   return (
     <Card>
       <CardHeader>Income and Expense</CardHeader>
       <CardBody>
-        <div style={{ height: "400px" }}>
-          {/* Bar chart with reference to access chart instance */}
-          <Bar ref={chartRef} data={data} options={options} />
+        <div
+          style={{ minHeight: "300px", maxHeight: "400px" }}
+          className="d-flex justify-content-center align-items-center"
+        >
+          {datas.length ? (
+            <Bar ref={chartRef} data={data} options={options} />
+          ) : (
+            <h1 className="">No Data</h1>
+          )}
         </div>
       </CardBody>
       <CardFooter>
-        <Button onClick={download}>Download</Button>{" "}
-        {/* Download button triggers chart download */}
+        <div className="d-flex flex-wrap justify-content-between ">
+          <Button onClick={download}>Download</Button>
+          <Controls
+            timeInterval={timeInterval}
+            setTimeInterval={setTimeInterval}
+          />
+        </div>
       </CardFooter>
     </Card>
   );
 }
 
 export default IncomeAndExpense;
+
+interface ControlsProps {
+  timeInterval: string;
+  setTimeInterval: (interval: string) => void;
+}
+
+function Controls({ timeInterval, setTimeInterval }: ControlsProps) {
+  const timeIntervalOptions = [
+    "Daily",
+    "Weekly",
+    "Monthly",
+    "Semi-Annually",
+    "Annually",
+  ];
+
+  return (
+    <ButtonGroup>
+      {timeIntervalOptions.map((interval, id) => (
+        <ToggleButton
+          key={id}
+          id={`timeIntervals-${id}`}
+          type="radio"
+          value={interval}
+          checked={interval === timeInterval}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setTimeInterval(e.currentTarget.value)
+          }
+        >
+          {interval}
+        </ToggleButton>
+      ))}
+    </ButtonGroup>
+  );
+}

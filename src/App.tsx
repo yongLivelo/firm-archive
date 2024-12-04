@@ -6,8 +6,10 @@ import Archive from "@/pages/Archive";
 import NoPage from "@/pages/Auth/NoPage";
 import ProtectedRoutes from "@/pages/Auth/ProtectedRoutes";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { auth } from "./firebase/firebase";
+
+export const AuthContext = createContext<User | null>(null);
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -30,18 +32,20 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route index element={<Login user={user} />} />
-        <Route path="/login" element={<Login user={user} />} />
-        <Route element={<ProtectedRoutes user={user} />}>
-          <Route path="/entry" element={<Entry />} />
-          <Route path="/statistics" element={<Statistics />} />
-          <Route path="/archive" element={<Archive />} />
-          <Route path="*" element={<NoPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <AuthContext.Provider value={user}>
+      <BrowserRouter>
+        <Routes>
+          <Route index element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route element={<ProtectedRoutes />}>
+            <Route path="/entry" element={<Entry />} />
+            <Route path="/statistics" element={<Statistics />} />
+            <Route path="/archive" element={<Archive />} />
+            <Route path="*" element={<NoPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthContext.Provider>
   );
 }
 

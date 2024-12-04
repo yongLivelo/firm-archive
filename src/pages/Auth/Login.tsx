@@ -9,13 +9,11 @@ import {
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/firebase";
 import { Navigate } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "@/App";
 
-type LoginProps = {
-  user: any | null;
-};
-
-function Login({ user }: LoginProps) {
+function Login() {
+  const user = useContext(AuthContext);
   const checkInput = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const email = (e.currentTarget.email as HTMLInputElement).value;

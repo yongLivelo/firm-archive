@@ -10,28 +10,37 @@ import {
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
 import { useContext, useEffect, useRef, useState } from "react";
+import { PostContext } from "../Statistics";
 
 ChartJS.register();
 
 export default function CashFlow() {
   const chartRef = useRef<ChartJS | null | any>(null);
+  const datas = useContext(PostContext);
 
   const download = () => {
     if (chartRef.current) {
-      const url = chartRef.current.toBase64Image(); // Get chart image as base64
+      const url = chartRef.current.toBase64Image();
       const a = document.createElement("a");
       a.href = url;
-      a.download = "chart.png"; // Set the name of the file to download
-      a.click(); // Trigger the download
+      a.download = "chart.png";
+      a.click();
     }
   };
 
+  const dateMapped = datas?.map((row, i) => {
+    return row.date;
+  });
+
+  const amountMapped = datas?.map((row, i) => {
+    return row.amount;
+  });
   const data = {
-    labels: ["January", "February", "March", "April", "May", "June"],
+    labels: dateMapped,
     datasets: [
       {
         label: "Sales",
-        data: [400, 300, 500, 700, 600, 800],
+        data: amountMapped,
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         tension: 0.4,
