@@ -163,7 +163,7 @@ function Controls({ type, setType }: ControlsProps) {
           key={index}
           id={`type-${index}`}
           type="radio"
-          variant={option === type ? "primary" : "secondary"}
+          variant={"primary"}
           value={option}
           checked={option === type}
           onChange={(e) => setType(e.currentTarget.value)}

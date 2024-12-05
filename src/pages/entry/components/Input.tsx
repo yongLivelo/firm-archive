@@ -1,6 +1,3 @@
-import InputForm from "@/components/InputForm/InputForm";
-import { Row } from "@/interface/Row";
-import { toast } from "react-toastify";
 import { useContext, useEffect, useState } from "react";
 import {
   Button,
@@ -14,15 +11,25 @@ import {
   ModalHeader,
   ModalTitle,
 } from "react-bootstrap";
+import { toast } from "react-toastify";
 import { TableContext } from "../Entry";
 import { TableContextType } from "@/interface/TableContextType";
+import InputForm from "@/components/InputForm/InputForm";
+import { Row } from "@/interface/Row";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { User } from "firebase/auth";
+import { AuthContext } from "@/App";
+import { db } from "@/firebase/firebase";
 
 let table: TableContextType;
+let user: User | null;
 export default function Input() {
   table = useContext(TableContext) as TableContextType;
+  user = useContext(AuthContext);
 
   const formName = "main-form";
   const [validated, setValidated] = useState<boolean>(false);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>, row: Row) => {
     e.preventDefault();
     e.stopPropagation();
@@ -36,6 +43,8 @@ export default function Input() {
     }
   };
 
+  if (!table.data) return <>Wala pa</>;
+
   return (
     <>
       <Card>
@@ -46,8 +55,8 @@ export default function Input() {
             validated={validated}
           />
         </CardBody>
-        <CardFooter className="p-0  pt-2 d-flex justify-content-between flex-wrap">
-          <div className="d-flex gap-2  mx-2 mb-2">
+        <CardFooter className="p-0 pt-2 d-flex justify-content-between flex-wrap">
+          <div className="d-flex gap-2 mx-2 mb-2">
             <Add form={`${formName}`} />
             <Delete />
             <Edit />
@@ -61,17 +70,12 @@ export default function Input() {
       </Card>
     </>
   );
-  {
-  }
 }
 
-interface AddProps {
-  form: string;
-}
-function Add({ ...Props }: AddProps) {
+function Add({ form }: { form: string }) {
   return (
     <>
-      <Button type="submit" form={`${Props.form}`}>
+      <Button type="submit" form={`${form}`}>
         Add
       </Button>
     </>
@@ -132,7 +136,7 @@ function Edit() {
             validated={false}
             handleSubmit={handleSubmit}
             editRow={editRowData}
-          ></InputForm>
+          />
         </ModalBody>
         <ModalFooter>
           <Button variant="secondary" onClick={handleClose}>
@@ -152,6 +156,7 @@ function Csv() {
     <>
       <Button
         onClick={() => {
+          console.log("triggerr");
           table?.data?.button(".buttons-csv").trigger();
         }}
       >
@@ -166,21 +171,36 @@ function Post() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const postTables = () => {
-    toast("Table Posted", { autoClose: 4000 });
-    const existingPostTable = JSON.parse(
-      localStorage.getItem("postTable") || "[]"
-    ) as Row[];
-    const draftTableData = table?.data?.data().toArray() || [];
+  const postTables = async () => {
+    if (!user?.uid) return;
 
-    localStorage.setItem(
-      "postTable",
-      JSON.stringify([...existingPostTable, ...draftTableData])
-    );
+    try {
+      const userDocRef = doc(db, "users", user.uid);
 
-    handleClose();
-    table?.data?.clear().draw();
-    localStorage.setItem("draftTable", "");
+      const userDocSnap = await getDoc(userDocRef);
+      const userData = userDocSnap.data();
+
+      if (!userData) {
+        toast.error("User data not found.");
+        return;
+      }
+
+      const currentPosts = userData.post ? JSON.parse(userData.post) : [];
+      const draftTable = table?.data?.data().toArray();
+      const newPosts = [...(draftTable as []), ...currentPosts];
+      console.log(newPosts);
+
+      await updateDoc(userDocRef, {
+        post: JSON.stringify(newPosts),
+      });
+
+      toast("Table Posted", { autoClose: 4000 });
+      handleClose();
+      table?.data?.clear().draw();
+    } catch (error) {
+      console.error("Error updating document: ", error);
+      toast.error("Error posting table.");
+    }
   };
 
   return (
@@ -206,14 +226,18 @@ function Post() {
     </>
   );
 }
+
 function Save() {
-  const saveDraftTable = () => {
-    toast("Table Saved", { autoClose: 4000 });
-    localStorage.setItem(
-      "draftTable",
-      JSON.stringify(table?.data?.data().toArray())
-    );
+  const saveDraftTable = async () => {
+    if (!user?.uid) return;
+    const userDocRef = doc(db, "users", user.uid);
+    await updateDoc(userDocRef, {
+      draft: JSON.stringify(table?.data?.data().toArray()),
+    }).then(() => {
+      toast("Table Saved", { autoClose: 4000 });
+    });
   };
+
   return (
     <>
       <Button onClick={saveDraftTable}>Save</Button>

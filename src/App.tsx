@@ -1,33 +1,49 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { createContext, useEffect, useState, useContext } from "react";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth } from "@/firebase/firebase";
+
 import Login from "@/pages/Auth/Login";
 import Entry from "@/pages/Entry";
 import Statistics from "@/pages/Statistics";
 import Archive from "@/pages/Archive";
 import NoPage from "@/pages/Auth/NoPage";
 import ProtectedRoutes from "@/pages/Auth/ProtectedRoutes";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { createContext, useEffect, useState } from "react";
-import { auth } from "./firebase/firebase";
+import { Spinner } from "react-bootstrap";
 
+// Contexts
 export const AuthContext = createContext<User | null>(null);
+export const LoadingContext = createContext<{
+  isLoading: boolean;
+  setLoading: (loading: boolean) => void;
+}>({
+  isLoading: false,
+  setLoading: () => {},
+});
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
-  const [isFetching, setIsFetching] = useState(true);
+  const [userLoading, setUserLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
-      setIsFetching(false);
+      setUserLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
-  if (isFetching) {
+  if (userLoading) {
     return (
-      <h2 className="vh-100 d-flex align-items-center justify-content-center">
-        Loading...
-      </h2>
+      <div className="vh-100 d-flex align-items-center justify-content-center flex-column">
+        <Spinner
+          animation="border"
+          style={{ width: "100px", height: "100px" }}
+          role="status"
+          className="mb-4"
+        />
+        <h2>Loading...</h2>
+      </div>
     );
   }
 

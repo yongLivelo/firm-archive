@@ -1,6 +1,4 @@
-import settingsIcon from "@/assets/settings.png";
-import profile from "@/assets/je-bikeshop.jpg";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Button,
   Container,
@@ -11,7 +9,11 @@ import {
   ModalTitle,
 } from "react-bootstrap";
 import { signOut } from "firebase/auth";
-import { auth } from "@/firebase/firebase";
+import { auth, db } from "@/firebase/firebase";
+import settingsIcon from "@/assets/settings.png";
+import profile from "@/assets/default-user.png";
+import { AuthContext } from "@/App";
+import { doc, getDoc } from "firebase/firestore";
 
 function Settings() {
   const [show, setShow] = useState(false);
@@ -21,8 +23,30 @@ function Settings() {
   const handleLogout = () => {
     signOut(auth)
       .then(() => console.log("Sign Out"))
-      .catch((error) => console.log("Error"));
+      .catch(() => console.log("Error"));
   };
+  const user = useContext(AuthContext);
+  const [userData, setUserData] = useState<any>(null);
+
+  useEffect(() => {
+    const getUserData = async () => {
+      if (user?.uid) {
+        try {
+          const userDocRef = doc(db, "users", user.uid);
+          const userDocSnap = await getDoc(userDocRef);
+          if (userDocSnap.exists()) {
+            setUserData(userDocSnap.data());
+          }
+        } catch (err) {
+          console.error("Error getting document: ", err);
+        }
+      }
+    };
+
+    if (user) {
+      getUserData();
+    }
+  }, [user]);
 
   return (
     <>
@@ -54,19 +78,9 @@ function Settings() {
               }}
             />
             <h5 id="user-name" className="mb-2">
-              JE Bikeshop
+              {user?.email}
             </h5>
           </Container>
-          <br></br>
-          <h5 className="mb-2">Developer Controls</h5>
-          <Button
-            onClick={() => {
-              localStorage.clear();
-              location.reload();
-            }}
-          >
-            Clear
-          </Button>
         </ModalBody>
         <ModalFooter>
           <Button variant="primary" onClick={handleLogout}>

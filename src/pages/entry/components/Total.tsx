@@ -1,5 +1,3 @@
-import { Row } from "@/interface/Row";
-import { Flow } from "@/interface/Flow";
 import { useContext, useState } from "react";
 import {
   Card,
@@ -8,6 +6,8 @@ import {
   CardTitle,
   CardText,
 } from "react-bootstrap";
+import { Row } from "@/interface/Row";
+import { Flow } from "@/interface/Flow";
 import { TableContext } from "../Entry";
 import { TableContextType } from "@/interface/TableContextType";
 

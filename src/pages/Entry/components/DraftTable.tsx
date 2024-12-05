@@ -1,29 +1,38 @@
 import FixedTable from "@/components/FixedTable";
 import { TableContextType } from "@/interface/TableContextType";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { TableContext } from "@/pages/Entry/Entry";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase/firebase";
+import { AuthContext } from "@/App";
 
 export default function DraftTable() {
-  const tableRef = useContext(TableContext) as TableContextType;
-  console.log(tableRef);
+  const mainTable = useContext(TableContext) as TableContextType;
+  const user = useContext(AuthContext);
+
   useEffect(() => {
-    if (localStorage.getItem("draftTable")) {
+    const retrieveData = async () => {
       try {
-        const draftTableData = JSON.parse(
-          localStorage.getItem("draftTable") as string
-        );
-        if (tableRef?.data?.rows) {
-          tableRef.data.rows.add(draftTableData).draw();
+        if (!user?.uid) return;
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          mainTable?.data?.rows.add(JSON.parse(docSnap.data().draft)).draw();
         }
       } catch (error) {
         console.error("Error parsing draftTable from localStorage:", error);
       }
+    };
+
+    if (user) {
+      retrieveData();
     }
-  }, [tableRef]);
+  }, [mainTable]);
 
   return (
     <>
-      <FixedTable tableId={tableRef} />
+      {" "}
+      <FixedTable tableId={mainTable} />
     </>
   );
 }

@@ -4,7 +4,7 @@ import Total from "./components/Total";
 import NavBar from "@/components/NavBar";
 import { ToastContainer } from "react-toastify";
 import { Container, Row, Col } from "react-bootstrap";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { Api } from "datatables.net-bs5";
 import { TableContextType } from "@/interface/TableContextType";
 
@@ -12,6 +12,7 @@ export const TableContext = createContext<TableContextType | null>(null);
 
 function Entry() {
   const [draft, setDraft] = useState<Api | null | undefined>(null);
+
   return (
     <>
       <TableContext.Provider value={{ data: draft, setData: setDraft }}>
@@ -27,6 +28,7 @@ function Entry() {
             </Col>
           </Row>
         </Container>
+
         <ToastContainer hideProgressBar position="top-center" />
       </TableContext.Provider>
     </>

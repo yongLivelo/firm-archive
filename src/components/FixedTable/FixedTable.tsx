@@ -9,7 +9,7 @@ import "datatables.net-select-bs5";
 import "datatables.net-buttons/js/buttons.html5.mjs";
 import "datatables.net-buttons/js/buttons.print.mjs";
 
-import { Card, CardBody } from "react-bootstrap";
+import { Card, CardBody, Spinner } from "react-bootstrap";
 import { TableContextType } from "@/interface/TableContextType";
 
 DataTable.use(DT);
@@ -19,9 +19,13 @@ interface Props {
   showButtons?: boolean;
 }
 
-export default function FixedTable({ tableId, showButtons = false }: Props) {
+export default function FixedTable({
+  tableId,
+
+  showButtons = false,
+}: Props) {
   const tableRef = useRef<DataTableRef>(null);
-  const table = tableId;
+  const mainTable = tableId;
 
   const columns = [
     { data: "code", title: "Code" },
@@ -35,8 +39,14 @@ export default function FixedTable({ tableId, showButtons = false }: Props) {
     {
       data: "amount",
       title: "Amount",
-      render: (data: number, type: string) =>
-        type === "display" ? `₱${data.toFixed(2)}` : Number(data),
+      render: (data: number, type: string) => {
+        console.log(type);
+        if (type === "display") {
+          return `₱${data.toFixed(2)}`;
+        }
+
+        return data;
+      },
     },
     {
       data: "description",
@@ -48,10 +58,8 @@ export default function FixedTable({ tableId, showButtons = false }: Props) {
     },
   ];
 
-  // Initialize DataTable
   useEffect(() => {
-    table?.setData(tableRef.current?.dt());
-    if (localStorage.getItem("save")) return;
+    mainTable?.setData(tableRef.current?.dt());
   }, []);
 
   return (
@@ -66,10 +74,9 @@ export default function FixedTable({ tableId, showButtons = false }: Props) {
               responsive: true,
               select: !showButtons,
               layout: {
-                topStart: {
-                  buttons: ["copy", "csv", "excel", "pdf", "print"],
-                },
+                topStart: "buttons",
               },
+              buttons: ["copy", "csv", "excel", "pdf", "print"],
             }}
             ref={tableRef}
           >

@@ -1,19 +1,22 @@
+import React, { useContext, useState } from "react";
+import { Navigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import {
   Form,
   FormControl,
   FormGroup,
   FormLabel,
   Button,
-  Alert,
+  Spinner,
 } from "react-bootstrap";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase/firebase";
-import { Navigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { auth, db } from "@/firebase/firebase";
 import { AuthContext } from "@/App";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 function Login() {
-  const user = useContext(AuthContext);
+  const user = useContext(AuthContext); // Get user context
+  const [loading, setLoading] = useState(false);
+
   const checkInput = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const email = (e.currentTarget.email as HTMLInputElement).value;
@@ -21,19 +24,37 @@ function Login() {
 
     if (!email || !password) return;
 
+    setLoading(true);
+
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
+      const userDocRef = doc(db, "users", userCredential.user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        console.log("User document:", userDocSnap.data());
+      } else {
+        await setDoc(userDocRef, {
+          email: userCredential.user.email,
+          draft: "",
+          post: "",
+        }).then(() => {
+          setLoading(false);
+        });
+      }
       console.log(userCredential.user);
     } catch (err: any) {
       alert("Wrong Password/ Email");
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (user) {
+  if (user && !loading) {
     return <Navigate to="/entry" />;
   }
 
@@ -47,7 +68,7 @@ function Login() {
           <FormLabel>Email</FormLabel>
           <FormControl
             name="email"
-            type="text"
+            type="email"
             placeholder="Enter your email"
             required
           />
@@ -61,8 +82,16 @@ function Login() {
             required
           />
         </FormGroup>
-        <Button type="submit" variant="primary">
-          Login
+        <Button type="submit" variant="primary" disabled={loading}>
+          {loading ? (
+            <Spinner
+              animation="border"
+              style={{ width: "20px", height: "20px" }}
+              role="status"
+            />
+          ) : (
+            "Login"
+          )}
         </Button>
       </Form>
     </div>

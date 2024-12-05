@@ -1,36 +1,43 @@
+import { AuthContext } from "@/App";
 import FixedTable from "@/components/FixedTable/FixedTable";
 import Nav from "@/components/NavBar";
+import { db } from "@/firebase/firebase";
 import { TableContextType } from "@/interface/TableContextType";
 import { Api } from "datatables.net";
+import { doc, getDoc } from "firebase/firestore";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 
 function Archive() {
   const [post, setPost] = useState<Api | null | undefined>(null);
-
-  const tableRef: TableContextType = { data: post, setData: setPost };
+  const mainTable: TableContextType = { data: post, setData: setPost };
+  const user = useContext(AuthContext);
 
   useEffect(() => {
-    if (localStorage.getItem("postTable")) {
+    const retrieveData = async () => {
       try {
-        const postTableData = JSON.parse(
-          localStorage.getItem("postTable") as string
-        );
-
-        if (tableRef?.data?.rows) {
-          tableRef.data.rows.add(postTableData).draw();
+        if (!user?.uid) return;
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          mainTable?.data?.rows.add(JSON.parse(docSnap.data().post)).draw();
         }
       } catch (error) {
-        console.error("Error parsing postTable from localStorage:", error);
+        console.error("Error parsing draftTable from localStorage:", error);
       }
+    };
+
+    if (user) {
+      retrieveData();
     }
-  }, [tableRef]);
+  }, [mainTable]);
+
   return (
     <>
       <Nav />
       <Container className="p-4">
-        <FixedTable tableId={tableRef} showButtons />
+        <FixedTable tableId={mainTable} showButtons />
       </Container>
     </>
   );
