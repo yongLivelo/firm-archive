@@ -10,6 +10,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalTitle,
+  Spinner,
 } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { TableContext } from "../Entry";
@@ -33,7 +34,6 @@ export default function Input() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>, row: Row) => {
     e.preventDefault();
     e.stopPropagation();
-
     const form = e.currentTarget;
     if (!form.checkValidity() === false) {
       let codedRow = { ...row, ["code"]: createCode() };
@@ -42,8 +42,6 @@ export default function Input() {
       setValidated(true);
     }
   };
-
-  if (!table.data) return <>Wala pa</>;
 
   return (
     <>
@@ -100,7 +98,7 @@ function Edit() {
   const formName = "edit-form";
   const [show, setShow] = useState(false);
   const [editRowData, setEditRowData] = useState<Row>();
-
+  const [validated, setValidated] = useState<boolean>(false);
   const handleClose = () => setShow(false);
   const handleEditRow = () => {
     if ((table?.data?.rows({ selected: true }).data() ?? []).length !== 1) {
@@ -113,13 +111,19 @@ function Edit() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>, row: Row) => {
     e.preventDefault();
+    e.stopPropagation();
 
-    const selectedIndex = table?.data?.rows({ selected: true }).indexes()[0];
+    const form = e.currentTarget;
+    if (!form.checkValidity() === false) {
+      const selectedIndex = table?.data?.rows({ selected: true }).indexes()[0];
 
-    if (editRowData) {
-      table?.data?.row(selectedIndex).data(row).draw();
+      if (editRowData) {
+        table?.data?.row(selectedIndex).data(row).draw();
+      }
+      setShow(false);
+    } else {
+      setValidated(true);
     }
-    setShow(false);
   };
 
   return (
@@ -133,7 +137,7 @@ function Edit() {
         <ModalBody>
           <InputForm
             id={`${formName}`}
-            validated={false}
+            validated={validated}
             handleSubmit={handleSubmit}
             editRow={editRowData}
           />
@@ -168,15 +172,15 @@ function Csv() {
 
 function Post() {
   const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const postTables = async () => {
     if (!user?.uid) return;
-
+    setLoading(true);
     try {
       const userDocRef = doc(db, "users", user.uid);
-
       const userDocSnap = await getDoc(userDocRef);
       const userData = userDocSnap.data();
 
@@ -193,7 +197,7 @@ function Post() {
       await updateDoc(userDocRef, {
         post: JSON.stringify(newPosts),
       });
-
+      setLoading(false);
       toast("Table Posted", { autoClose: 4000 });
       handleClose();
       table?.data?.clear().draw();
@@ -216,7 +220,15 @@ function Post() {
         </ModalBody>
         <ModalFooter>
           <Button variant="primary" onClick={postTables}>
-            Post
+            {loading ? (
+              <Spinner
+                animation="border"
+                style={{ width: "20px", height: "20px" }}
+                role="status"
+              />
+            ) : (
+              "Post"
+            )}
           </Button>
           <Button variant="secondary" onClick={handleClose}>
             Close
@@ -228,19 +240,31 @@ function Post() {
 }
 
 function Save() {
+  const [loading, setLoading] = useState(false);
   const saveDraftTable = async () => {
+    setLoading(true);
     if (!user?.uid) return;
     const userDocRef = doc(db, "users", user.uid);
     await updateDoc(userDocRef, {
       draft: JSON.stringify(table?.data?.data().toArray()),
-    }).then(() => {
-      toast("Table Saved", { autoClose: 4000 });
     });
+    setLoading(false);
+    toast("Table Saved", { autoClose: 4000 });
   };
 
   return (
     <>
-      <Button onClick={saveDraftTable}>Save</Button>
+      <Button onClick={saveDraftTable}>
+        {loading ? (
+          <Spinner
+            animation="border"
+            style={{ width: "20px", height: "20px" }}
+            role="status"
+          />
+        ) : (
+          "Save"
+        )}
+      </Button>
     </>
   );
 }

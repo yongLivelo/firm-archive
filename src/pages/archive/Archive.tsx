@@ -7,10 +7,11 @@ import { Api } from "datatables.net";
 import { doc, getDoc } from "firebase/firestore";
 
 import { useContext, useEffect, useState } from "react";
-import { Container } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 
 function Archive() {
   const [post, setPost] = useState<Api | null | undefined>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const mainTable: TableContextType = { data: post, setData: setPost };
   const user = useContext(AuthContext);
 
@@ -25,6 +26,8 @@ function Archive() {
         }
       } catch (error) {
         console.error("Error parsing draftTable from localStorage:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -33,6 +36,19 @@ function Archive() {
     }
   }, [mainTable]);
 
+  if (loading) {
+    return (
+      <div className="vh-100 d-flex align-items-center justify-content-center flex-column">
+        <Spinner
+          animation="border"
+          style={{ width: "100px", height: "100px" }}
+          role="status"
+          className="mb-4"
+        />
+        <h2>Loading Archive Contents...</h2>
+      </div>
+    );
+  }
   return (
     <>
       <Nav />
