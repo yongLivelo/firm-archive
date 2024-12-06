@@ -1,5 +1,5 @@
 import { AuthContext } from "@/App";
-import FixedTable from "@/components/FixedTable/FixedTable";
+import FixedTable from "@/components/FixedTable";
 import Nav from "@/components/NavBar";
 import { db } from "@/firebase/firebase";
 import { TableContextType } from "@/interface/TableContextType";
