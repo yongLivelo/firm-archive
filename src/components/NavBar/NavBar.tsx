@@ -39,7 +39,7 @@ function NavBar() {
             <NavLink
               as={Link}
               to="/archive/"
-              className={activatedLink("/archive")}
+              className={activatedLink("/archive/")}
             >
               Archive
             </NavLink>

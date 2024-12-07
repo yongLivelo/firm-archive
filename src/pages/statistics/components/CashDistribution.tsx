@@ -86,6 +86,7 @@ export default function CashDistribution() {
    * Handle data rendering based on the selected type.
    */
   useEffect(() => {
+    console.log(datas);
     if (type === "Flow") renderFlow();
     if (type === "Mode") renderMode();
   }, [type, datas]);

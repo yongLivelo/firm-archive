@@ -16,33 +16,14 @@ export const AuthContext = createContext<User | null>(null);
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
-  const [userLoading, setUserLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
-      setUserLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
-<<<<<<< HEAD
-  if (userLoading) {
-    return (
-      <div className="vh-100 d-flex align-items-center justify-content-center flex-column">
-        <Spinner
-          animation="border"
-          style={{ width: "100px", height: "100px" }}
-          role="status"
-          className="mb-4"
-        />
-        <h2>Loading...</h2>
-      </div>
-    );
-  }
-
-=======
->>>>>>> parent of e14d0ed (Revert "firebase deployment implementation")
   return (
     <AuthContext.Provider value={user}>
       <BrowserRouter>
