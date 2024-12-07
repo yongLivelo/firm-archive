@@ -196,6 +196,7 @@ function Post() {
 
       await updateDoc(userDocRef, {
         post: JSON.stringify(newPosts),
+        draft: "[]",
       });
       setLoading(false);
       toast("Table Posted", { autoClose: 4000 });
