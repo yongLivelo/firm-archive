@@ -40,6 +40,7 @@ export default function FixedTable({
       data: "amount",
       title: "Amount",
       render: (data: number, type: string) => {
+        console.log(type);
         if (type === "display") {
           return `₱${data.toFixed(2)}`;
         }

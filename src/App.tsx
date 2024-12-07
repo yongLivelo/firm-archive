@@ -42,7 +42,7 @@ function App() {
           role="status"
           className="mb-4"
         />
-        <h2>Loading Page...</h2>
+        <h2>Loading...</h2>
       </div>
     );
   }
