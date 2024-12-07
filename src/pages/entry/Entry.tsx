@@ -32,7 +32,7 @@ function Entry() {
 
         if (docSnap.exists()) {
           draft?.rows.add(JSON.parse(docSnap.data().draft)).draw();
-          console.log(draft);
+          console.log(JSON.parse(docSnap.data().draft));
         }
       } catch (error) {
         console.error("Error parsing draftTable from localStorage:", error);
