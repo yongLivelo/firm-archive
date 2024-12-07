@@ -31,7 +31,10 @@ export default function DraftTable() {
 
   return (
     <>
+<<<<<<< HEAD
       {" "}
+=======
+>>>>>>> parent of e14d0ed (Revert "firebase deployment implementation")
       <FixedTable tableId={mainTable} />
     </>
   );

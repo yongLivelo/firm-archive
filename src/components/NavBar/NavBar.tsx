@@ -1,13 +1,13 @@
 import Settings from "./Settings";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import {
   Navbar,
   Nav,
+  NavLink,
   Container,
   NavbarBrand,
   NavbarToggle,
   NavbarCollapse,
-  NavLink,
 } from "react-bootstrap";
 
 function NavBar() {
@@ -18,33 +18,38 @@ function NavBar() {
   };
 
   return (
-    <>
-      <Navbar expand="lg" className="shadow-sm">
-        <Container fluid>
-          <NavbarBrand href="/entry"> Firm Archive</NavbarBrand>
-          <NavbarToggle aria-controls="basic-navbar-nav" />
-          <NavbarCollapse>
-            <Nav className="me-auto">
-              <NavLink className={activatedLink("/entry")} href="/entry">
-                Entry
-              </NavLink>
-              <NavLink
-                className={activatedLink("/statistics")}
-                href="/statistics"
-              >
-                Statistics
-              </NavLink>
-              <NavLink className={activatedLink("/archive")} href="/archive">
-                Archive
-              </NavLink>
-            </Nav>
-            <Nav>
-              <Settings />
-            </Nav>
-          </NavbarCollapse>
-        </Container>
-      </Navbar>
-    </>
+    <Navbar expand="lg" className="shadow-sm">
+      <Container fluid>
+        <NavbarBrand as={Link} to="/entry">
+          Firm Archive
+        </NavbarBrand>
+        <NavbarToggle aria-controls="basic-navbar-nav" />
+        <NavbarCollapse>
+          <Nav className="me-auto">
+            <NavLink as={Link} to="/entry" className={activatedLink("/entry")}>
+              Entry
+            </NavLink>
+            <NavLink
+              as={Link}
+              to="/statistics/"
+              className={activatedLink("/statistics")}
+            >
+              Statistics
+            </NavLink>
+            <NavLink
+              as={Link}
+              to="/archive/"
+              className={activatedLink("/archive")}
+            >
+              Archive
+            </NavLink>
+          </Nav>
+          <Nav>
+            <Settings />
+          </Nav>
+        </NavbarCollapse>
+      </Container>
+    </Navbar>
   );
 }
 
