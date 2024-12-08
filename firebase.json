@@ -8,6 +8,6 @@
         "destination": "/index.html"
       }
     ],
-    "trailingSlash": true
+    "trailingSlash": false
   }
 }

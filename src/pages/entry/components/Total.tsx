@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Card,
   CardBody,
@@ -13,6 +13,7 @@ import { TableContextType } from "@/interface/TableContextType";
 
 function Total() {
   const table = useContext(TableContext) as TableContextType;
+
   let [total, setTotal] = useState({
     amount: 0,
     expenses: 0,

@@ -31,15 +31,15 @@ function NavBar() {
             </NavLink>
             <NavLink
               as={Link}
-              to="/statistics/"
+              to="/statistics"
               className={activatedLink("/statistics")}
             >
               Statistics
             </NavLink>
             <NavLink
               as={Link}
-              to="/archive/"
-              className={activatedLink("/archive/")}
+              to="/archive"
+              className={activatedLink("/archive")}
             >
               Archive
             </NavLink>

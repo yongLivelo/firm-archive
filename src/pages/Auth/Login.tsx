@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { json, Navigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import {
   Form,
@@ -32,21 +32,25 @@ function Login() {
         email,
         password
       );
-      const userDocRef = doc(db, "users", userCredential.user.uid);
-      const userDocSnap = await getDoc(userDocRef);
+      {
+        const userDocRef = doc(db, "users", userCredential.user.uid);
+        const userDocSnap = await getDoc(userDocRef);
 
-      if (userDocSnap.exists()) {
-        console.log("User document:", userDocSnap.data());
-      } else {
-        await setDoc(userDocRef, {
-          email: userCredential.user.email,
-          draft: "",
-          post: "",
-        }).then(() => {
+        if (!userDocSnap.exists()) {
+          await setDoc(userDocRef, {
+            email: userCredential.user.email,
+            draft: "[]",
+            post: "[]",
+            transactionCounter: "{}",
+          });
+        } else {
+          localStorage.setItem(
+            "transactionCounter",
+            JSON.parse((userDocSnap?.data()).transactionCounter)
+          );
           setLoading(false);
-        });
+        }
       }
-      console.log(userCredential.user);
     } catch (err: any) {
       alert("Wrong Password/ Email");
     } finally {

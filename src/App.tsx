@@ -12,6 +12,7 @@ import ProtectedRoutes from "@/pages/Auth/ProtectedRoutes";
 import { Spinner } from "react-bootstrap";
 
 // Contexts
+
 export const AuthContext = createContext<User | null>(null);
 
 function App() {

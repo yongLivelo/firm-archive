@@ -13,12 +13,11 @@ import { db } from "@/firebase/firebase";
 import { TableContextType } from "@/interface/TableContextType";
 import { Api } from "datatables.net-bs5";
 
-// Context for Table Data
 export const TableContext = createContext<TableContextType | null>(null);
 
 function Entry() {
   const [draft, setDraft] = useState<Api | null | undefined>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const user = useContext(AuthContext);
 
@@ -31,8 +30,7 @@ function Entry() {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          draft?.rows.add(JSON.parse(docSnap.data().draft)).draw();
-          console.log(JSON.parse(docSnap.data().draft));
+          draft?.rows.add(await JSON.parse(docSnap.data().draft)).draw();
         }
       } catch (error) {
         console.error("Error parsing draftTable from localStorage:", error);
@@ -46,7 +44,6 @@ function Entry() {
     }
   }, [draft]);
 
-  // Loading State
   if (loading) {
     return (
       <div className="vh-100 d-flex align-items-center justify-content-center flex-column">
@@ -61,7 +58,6 @@ function Entry() {
     );
   }
 
-  // Main Return
   return (
     <>
       <TableContext.Provider value={{ data: draft, setData: setDraft }}>

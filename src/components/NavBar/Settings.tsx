@@ -21,6 +21,7 @@ function Settings() {
   const handleShow = () => setShow(true);
 
   const handleLogout = () => {
+    localStorage.setItem("transactionCounter", "{}");
     signOut(auth)
       .then(() => console.log("Sign Out"))
       .catch(() => console.log("Error"));
