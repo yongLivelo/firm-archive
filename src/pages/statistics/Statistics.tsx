@@ -31,7 +31,7 @@ function Statistics() {
     if (user) {
       retrieveData();
     }
-  }, [loading]);
+  }, []);
 
   if (loading) {
     return (

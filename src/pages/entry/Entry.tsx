@@ -42,7 +42,7 @@ function Entry() {
     if (user) {
       retrieveData();
     }
-  }, [loading]);
+  }, []);
 
   if (loading) {
     return (
