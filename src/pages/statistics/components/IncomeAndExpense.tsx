@@ -128,7 +128,7 @@ function IncomeAndExpense() {
     },
   };
 
-  const [timeInterval, setTimeInterval] = useState<string>("1m");
+  const [timeInterval, setTimeInterval] = useState<string>("Monthly");
 
   useEffect(() => {
     groupDataByInterval(timeInterval);
