@@ -17,7 +17,7 @@ export const TableContext = createContext<TableContextType | null>(null);
 
 function Entry() {
   const [draft, setDraft] = useState<Api | null | undefined>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const user = useContext(AuthContext);
 
