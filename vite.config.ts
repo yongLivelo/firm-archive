@@ -9,5 +9,10 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  plugins: [react()],
+  plugins: [
+    react({
+      // Add this line
+      include: "**/*.tsx",
+    }),
+  ],
 });

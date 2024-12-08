@@ -1,6 +1,6 @@
 import { Flow } from "@/interface/Flow";
 import { Row } from "@/interface/Row";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   ButtonGroup,
   Form,
@@ -17,6 +17,7 @@ interface Props {
   editRow?: Row;
 }
 export default function InputForm({ ...Props }: Props) {
+  const formRef = useRef<HTMLFormElement | null>(null);
   const [formData, setFormData] = useState<Row>(
     Props?.editRow
       ? Props.editRow
@@ -36,11 +37,13 @@ export default function InputForm({ ...Props }: Props) {
 
   return (
     <Form
+      ref={formRef}
       id={Props.id}
       noValidate
       validated={Props.validated}
       onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        // formRef.current?.reset();
         Props.handleSubmit(e, formData);
       }}
     >

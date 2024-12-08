@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
   Button,
   Card,
@@ -21,6 +21,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { User } from "firebase/auth";
 import { AuthContext } from "@/App";
 import { db } from "@/firebase/firebase";
+import { Flow } from "@/interface/Flow";
 
 let table: TableContextType;
 let user: User | null;
@@ -31,12 +32,18 @@ export default function Input() {
   const formName = "main-form";
   const [validated, setValidated] = useState<boolean>(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>, row: Row) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+    row: Row
+  ) => {
     e.preventDefault();
     e.stopPropagation();
     const form = e.currentTarget;
     if (!form.checkValidity() === false) {
-      let codedRow = { ...row, ["code"]: createCode() };
+      setLoading(true);
+      let codedRow = { ...row, ["code"]: await createCode() };
+      setLoading(false);
       table?.data?.row.add(codedRow).draw();
     } else {
       setValidated(true);
@@ -55,7 +62,7 @@ export default function Input() {
         </CardBody>
         <CardFooter className="p-0 pt-2 d-flex justify-content-between flex-wrap">
           <div className="d-flex gap-2 mx-2 mb-2">
-            <Add form={`${formName}`} />
+            <Add form={`${formName}`} loading={loading} />
             <Delete />
             <Edit />
           </div>
@@ -70,11 +77,19 @@ export default function Input() {
   );
 }
 
-function Add({ form }: { form: string }) {
+function Add({ form, loading }: { form: string; loading: boolean }) {
   return (
     <>
-      <Button type="submit" form={`${form}`}>
-        Add
+      <Button type="submit" form={`${form}`} disabled={loading}>
+        {loading ? (
+          <Spinner
+            animation="border"
+            style={{ width: "20px", height: "20px" }}
+            role="status"
+          />
+        ) : (
+          "Add"
+        )}
       </Button>
     </>
   );
@@ -221,7 +236,7 @@ function Post() {
           <Container>You can't make any changes after this.</Container>
         </ModalBody>
         <ModalFooter>
-          <Button variant="primary" onClick={postTables}>
+          <Button variant="primary" onClick={postTables} disabled={loading}>
             {loading ? (
               <Spinner
                 animation="border"
@@ -256,7 +271,7 @@ function Save() {
 
   return (
     <>
-      <Button onClick={saveDraftTable}>
+      <Button onClick={saveDraftTable} disabled={loading}>
         {loading ? (
           <Spinner
             animation="border"
@@ -271,26 +286,27 @@ function Save() {
   );
 }
 
-const createCode = () => {
+const createCode = async () => {
   const today = new Date();
+  if (!user?.uid) return;
+  const userDocRef = doc(db, "users", user.uid);
+  const userDocSnap = await getDoc(userDocRef);
 
   const formattedDate = today.toISOString().split("T")[0].replace(/-/g, "");
-  let transactionCounters = JSON.parse(
-    localStorage.getItem("transactionCounters") || "{}"
-  );
-
+  let transactionCounters = JSON.parse(userDocSnap.data()?.transactionCounter);
+  console.log(transactionCounters);
   const lastGeneratedDate = transactionCounters["lastGeneratedDate"];
   if (lastGeneratedDate !== formattedDate) {
     transactionCounters["lastGeneratedDate"] = formattedDate;
     transactionCounters[formattedDate] = 1;
   }
+  console.log(transactionCounters);
 
   const counter = transactionCounters[formattedDate]++;
 
-  localStorage.setItem(
-    "transactionCounters",
-    JSON.stringify(transactionCounters)
-  );
+  await updateDoc(userDocRef, {
+    transactionCounter: JSON.stringify(transactionCounters),
+  });
 
   return `${formattedDate}-${String(counter).padStart(4, "0")}`;
 };

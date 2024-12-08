@@ -13,6 +13,60 @@ import { useRef, useState, useEffect, useContext } from "react";
 import { PostContext } from "../Statistics";
 import { Flow } from "@/interface/Flow";
 
+// Helper function to handle flow rendering
+const renderFlowData = (datas: any[]) => {
+  const counter = [0, 0]; // [Revenue, Loss]
+
+  datas.forEach((row) => {
+    if (row.flow === Flow.Expense) counter[1] += row.amount;
+    if (row.flow === Flow.Sale) counter[0] += row.amount;
+  });
+
+  return {
+    labels: ["Sales", "Expenses"],
+    datasets: [
+      {
+        data: counter,
+        backgroundColor: ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)"],
+        borderColor: ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
+        borderWidth: 1,
+      },
+    ],
+  };
+};
+
+// Helper function to handle mode rendering
+const renderModeData = (datas: any[]) => {
+  const counter = [0, 0, 0]; // [Cash, BPI, Gcash]
+
+  datas.forEach((row) => {
+    if (row.mode === "Cash") counter[0] += row.amount;
+    if (row.mode === "BPI") counter[1] += row.amount;
+    if (row.mode === "Gcash") counter[2] += row.amount;
+  });
+
+  return {
+    labels: ["Cash", "BPI", "Gcash"],
+    datasets: [
+      {
+        data: counter,
+        backgroundColor: [
+          "rgba(75, 192, 192, 0.6)",
+          "rgba(255, 99, 132, 0.6)",
+          "rgba(54, 162, 235, 0.6)",
+        ],
+        borderColor: [
+          "rgba(75, 192, 192, 1)",
+          "rgba(255, 99, 132, 1)",
+          "rgba(255, 49, 122, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+};
+
+// Cash Distribution Component
 export default function CashDistribution() {
   const chartRef = useRef<ChartJS<"pie"> | null>(null);
   const datas = useContext(PostContext) || [];
@@ -22,75 +76,13 @@ export default function CashDistribution() {
   });
   const [type, setType] = useState<string>("Flow");
 
-  /**
-   * Render data based on flow (Revenue and Loss).
-   */
-  const renderFlow = () => {
-    const counter = [0, 0]; // [Revenue, Loss]
-
-    datas.forEach((row: { flow: string; amount: number }) => {
-      if (row.flow === Flow.Expense) counter[1] += row.amount;
-      if (row.flow === Flow.Sale) counter[0] += row.amount;
-    });
-
-    setData({
-      labels: ["Sales", "Expenses"],
-      datasets: [
-        {
-          data: counter,
-          backgroundColor: [
-            "rgba(75, 192, 192, 0.6)",
-            "rgba(255, 99, 132, 0.6)",
-          ],
-          borderColor: ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
-          borderWidth: 1,
-        },
-      ],
-    });
-  };
-
-  /**
-   * Render data based on payment modes (Cash, BPI, Gcash).
-   */
-  const renderMode = () => {
-    const counter = [0, 0, 0]; // [Cash, BPI, Gcash]
-
-    datas.forEach((row: { mode: string; amount: number }) => {
-      if (row.mode === "Cash") counter[0] += row.amount;
-      if (row.mode === "BPI") counter[1] += row.amount;
-      if (row.mode === "Gcash") counter[2] += row.amount;
-    });
-
-    setData({
-      labels: ["Cash", "BPI", "Gcash"],
-      datasets: [
-        {
-          data: counter,
-          backgroundColor: [
-            "rgba(75, 192, 192, 0.6)",
-            "rgba(255, 99, 132, 0.6)",
-            "rgba(54, 162, 235, 0.6)",
-          ],
-          borderColor: [
-            "rgba(75, 192, 192, 1)",
-            "rgba(255, 99, 132, 1)",
-            "rgba(255, 49, 122, 1)",
-          ],
-          borderWidth: 1,
-        },
-      ],
-    });
-  };
-
-  /**
-   * Handle data rendering based on the selected type.
-   */
+  // Handle data rendering based on selected type
   useEffect(() => {
-    console.log(datas);
-    if (type === "Flow") renderFlow();
-    if (type === "Mode") renderMode();
+    if (type === "Flow") setData(renderFlowData(datas));
+    if (type === "Mode") setData(renderModeData(datas));
   }, [type, datas]);
 
+  // Download chart as an image
   const downloadChart = () => {
     try {
       if (chartRef.current) {
@@ -146,9 +138,7 @@ export default function CashDistribution() {
   );
 }
 
-/**
- * Toggle controls for chart type.
- */
+// Controls Component (Toggle buttons for Flow/Mode)
 interface ControlsProps {
   type: string;
   setType: (type: string) => void;

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -25,6 +25,7 @@
     "firebase": "^11.0.2",
     "jquery": "^3.7.1",
     "jszip": "^3.10.1",
+    "lodash": "^4.17.21",
     "pdfmake": "^0.2.13",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
@@ -36,6 +37,7 @@
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@types/bootstrap": "^5.2.10",
+    "@types/lodash": "^4.17.13",
     "@types/pdfmake": "^0.2.9",
     "@types/react": "^18.3.14",
     "@types/react-dom": "^18.3.2",

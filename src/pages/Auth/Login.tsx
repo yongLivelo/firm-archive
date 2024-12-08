@@ -44,10 +44,6 @@ function Login() {
             transactionCounter: "{}",
           });
         } else {
-          localStorage.setItem(
-            "transactionCounter",
-            JSON.parse((userDocSnap?.data()).transactionCounter)
-          );
           setLoading(false);
         }
       }

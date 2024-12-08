@@ -51,21 +51,30 @@ function Statistics() {
       <NavBar />
 
       <PostContext.Provider value={post}>
-        <Container fluid className="p-4">
-          <Row className="mb-lg-4">
-            <Col className="mb-4 mb-lg-0">
-              <CashFlow />
-            </Col>
-          </Row>
-          <Row className="mb-lg-4">
-            <Col lg={8} className="mb-4 mb-lg-0">
-              <IncomeAndExpense />
-            </Col>
-            <Col lg={4} className="mb-4 mb-lg-0">
-              <CashDistribution />
-            </Col>
-          </Row>
-        </Container>
+        {post?.length ? (
+          <Container fluid className="p-4">
+            <Row className="mb-lg-4">
+              <Col className="mb-4 mb-lg-0">
+                <CashFlow />
+              </Col>
+            </Row>
+            <Row className="mb-lg-4">
+              <Col lg={8} className="mb-4 mb-lg-0">
+                <IncomeAndExpense />
+              </Col>
+              <Col lg={4} className="mb-4 mb-lg-0">
+                <CashDistribution />
+              </Col>
+            </Row>
+          </Container>
+        ) : (
+          <h1
+            className="d-flex justify-content-center align-items-center vh-100 fs-1"
+            style={{ top: "-100px", position: "relative", zIndex: -1 }}
+          >
+            No Data
+          </h1>
+        )}
       </PostContext.Provider>
     </>
   );
