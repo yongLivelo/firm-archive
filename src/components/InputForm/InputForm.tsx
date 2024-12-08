@@ -43,7 +43,7 @@ export default function InputForm({ ...Props }: Props) {
       validated={Props.validated}
       onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // formRef.current?.reset();
+        
         Props.handleSubmit(e, formData);
       }}
     >

@@ -58,10 +58,13 @@ function IncomeAndExpense() {
           case "Monthly":
             key = entry.date.slice(0, 7);
             break;
-          case "Semi-Annually":
+          case "Quarterly":
             const month = new Date(entry.date).getMonth();
             const year = entry.date.slice(0, 4);
-            key = `${year}-H${month < 6 ? "1" : "2"}`;
+
+            const value = Math.ceil(month / 3).toString();
+
+            key = `${year}-H${value}`;
             break;
           case "Yearly":
             key = entry.date.slice(0, 4);
@@ -167,7 +170,7 @@ interface ControlsProps {
 }
 
 function Controls({ timeInterval, setTimeInterval }: ControlsProps) {
-  const timeIntervalOptions = ["Monthly", "Semi-Annually", "Yearly"];
+  const timeIntervalOptions = ["Monthly", "Quarterly", "Yearly"];
 
   return (
     <ButtonGroup className="d-flex justify-content-between flex-wrap">

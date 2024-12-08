@@ -6,12 +6,15 @@ import {
   CardFooter,
   ButtonGroup,
   ToggleButton,
+  Tooltip,
 } from "react-bootstrap";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
+
 import { useContext, useEffect, useRef, useState } from "react";
 import { PostContext } from "../Statistics";
 import { Flow } from "@/interface/Flow";
+
 ChartJS.register();
 
 export default function CashFlow() {
@@ -43,6 +46,7 @@ export default function CashFlow() {
 
   const groupDataByInterval = (interval: string) => {
     if (!datas) return;
+    let cumultativeValue = 0;
     const groupByTime: { [key: string]: number } = datas?.reduce(
       (acc: { [key: string]: number }, entry) => {
         let key: string;
@@ -73,10 +77,13 @@ export default function CashFlow() {
       ([keyA], [keyB]) => keyA.localeCompare(keyB) // Sorting by key (date string)
     );
 
-    const sortedData = sortedGroupByTime.map(([key, value]) => ({
-      date: key,
-      amount: value,
-    }));
+    const sortedData = sortedGroupByTime.map(([key, value]) => {
+      cumultativeValue += value;
+      return {
+        date: key,
+        amount: cumultativeValue,
+      };
+    });
 
     return {
       labels: sortedData.map((item) => item.date),
@@ -107,7 +114,30 @@ export default function CashFlow() {
       },
       title: {
         display: true,
-        text: "Sales Over Time",
+        text: "Revenue Over Time",
+      },
+      // Add scrollbar plugin options
+      scrollbar: {
+        enabled: true,
+        drag: true,
+        width: 10,
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Time Period",
+        },
+        ticks: {
+          autoSkip: false, // Ensures all labels are displayed (useful for scrolling)
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Revenue",
+        },
       },
     },
   };
@@ -116,8 +146,17 @@ export default function CashFlow() {
     <Card>
       <CardHeader>Cash Flow</CardHeader>
       <CardBody>
-        <div style={{ height: "500px" }}>
-          <Line ref={chartRef} data={data} options={options} />
+        <div
+          style={{
+            width: "100%",
+            height: "400px",
+            overflowX: "auto",
+            overflowY: "hidden",
+          }}
+        >
+          <div style={{ width: "2000px", height: "100%" }}>
+            <Line ref={chartRef} options={options} data={data} />
+          </div>
         </div>
       </CardBody>
       <CardFooter>
